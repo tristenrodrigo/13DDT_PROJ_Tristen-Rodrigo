@@ -19,7 +19,7 @@ if os.path.exists("session.txt"):
         cursor.execute("SELECT * FROM users WHERE email=?", (saved_email,))
         if cursor.fetchone():
             current_user_email = saved_email
-
+ 
 # Create the listings table if it doesn't exist
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS listings (
@@ -490,6 +490,15 @@ def new_listing_page():
         conn.commit()
         messagebox.showinfo("Info", "Listing saved successfully!")
         new_listing_window.destroy()
+        if category == "Clothes":
+            clothes_page = clothes_page()
+            clothes_page.deiconify()
+        elif category == "Shoes":
+            shoes_page = shoes_page()
+            shoes_page.deiconify()
+        elif category == "Accessories":
+            accessories_page = accessories_page()
+            accessories_page.deiconify()
 
     publish_listing_button = Label(new_listing_window, text="Publish Listing", font=("Lora", 12), bg="#809D3C", fg="white")
     publish_listing_button.place(x=10, y=400, width=370, height=40)
@@ -509,48 +518,7 @@ new_listing_button = Label(mainpage, text="Create New Listing", font=("Lora", 12
 new_listing_button.place(x=10, y=650, width=180, height=40)
 new_listing_button.bind("<Button-1>", open_new_listing_if_signed_in)
 
-def listing_page(listing_id=None):
-    listing_window = Toplevel(mainpage)
-    listing_window.title("Listing Page")
-    listing_window.geometry("400x700")
-    listing_window.config(bg="white")
-
-    if listing_id:
-        cursor.execute("SELECT name, description, image_path FROM listings WHERE id=?", (listing_id,))
-    else:
-        cursor.execute("SELECT name, description, image_path FROM listings ORDER BY id DESC LIMIT 1")
-    listing = cursor.fetchone()
-
-    header = Label(listing_window, text=listing[0] if listing else "Listing", font=("Lora", 24))
-    header.config(bg="#4F6F52", fg="white")
-    header.place(x=10, y=10, width=380, height=50)
-
-    # Display the image if available
-    main_image = Label(listing_window, bg="white")
-    main_image.place(x=10, y=70, width=180, height=180)
-    if listing and listing[2]:
-        try:
-            img = Image.open(listing[2])
-            img = img.resize((100, 100))
-            photo = ImageTk.PhotoImage(img)
-            main_image.config(image=photo)
-            main_image.image = photo
-        except Exception:
-            main_image.config(text="Image not found", fg="red")
-
-    description_label = Label(listing_window, text="Description:", font=("Lora", 12))
-    description_label.config(bg="white", fg="black")
-    description_label.place(x=10, y=260, width=180, height=30)
-
-    description_text = Label(listing_window, text=listing[1] if listing else "", font=("Lora", 12))
-    description_text.config(bg="white", fg="black")
-    description_text.place(x=200, y=260, width=180, height=30)
-
-    back_button = Label(listing_window, text="Back to Main Page", font=("Lora", 12), bg="#809D3C", fg="white")
-    back_button.place(x=10, y=650, width=370, height=40)
-    back_button.bind("<Button-1>", lambda event: (listing_window.destroy(), mainpage.deiconify()))
-    
-def Clothes_Page():
+def clothes_page():
     clothes_window = Toplevel(mainpage)
     clothes_window.title("Clothes")
     clothes_window.geometry("400x700")
@@ -568,7 +536,7 @@ def Clothes_Page():
 #Creating Clothes Header
 clothes_header = Label(mainpage, text="Clothes", font=("Lora", 18), bg="#5D8736", fg="white")
 clothes_header.place(x=10, y=120, width=180, height=40)
-clothes_header.bind("<Button-1>", lambda event: (Clothes_Page(), mainpage.withdraw()))
+clothes_header.bind("<Button-1>", lambda event: (clothes_page(), mainpage.withdraw()))
 cursor.execute("SELECT id, name, image_path FROM listings WHERE category='Clothes'")
 clothes_listings = cursor.fetchall()
 y_offset = 180
@@ -633,6 +601,47 @@ accessories_listing_image3 = Label(mainpage, text="Listing Image", font=("Lora",
 accessories_listing_image3.place(x=10, y=540, width=100, height=100)
 accessories_listing_image3.bind("<Button-1>", lambda event: (listing_page(), mainpage.withdraw()))
 
+def listing_page(listing_id=None):
+    listing_window = Toplevel(mainpage)
+    listing_window.title("Listing Page")
+    listing_window.geometry("400x700")
+    listing_window.config(bg="white")
+
+    if listing_id:
+        cursor.execute("SELECT name, description, image_path FROM listings WHERE id=?", (listing_id,))
+    else:
+        cursor.execute("SELECT name, description, image_path FROM listings ORDER BY id DESC LIMIT 1")
+    listing = cursor.fetchone()
+
+    header = Label(listing_window, text=listing[0] if listing else "Listing", font=("Lora", 24))
+    header.config(bg="#4F6F52", fg="white")
+    header.place(x=10, y=10, width=380, height=50)
+
+    # Display the image if available
+    main_image = Label(listing_window, bg="white")
+    main_image.place(x=10, y=70, width=180, height=180)
+    if listing and listing[2]:
+        try:
+            img = Image.open(listing[2])
+            img = img.resize((100, 100))
+            photo = ImageTk.PhotoImage(img)
+            main_image.config(image=photo)
+            main_image.image = photo
+        except Exception:
+            main_image.config(text="Image not found", fg="red")
+
+    description_label = Label(listing_window, text="Description:", font=("Lora", 12))
+    description_label.config(bg="white", fg="black")
+    description_label.place(x=10, y=260, width=180, height=30)
+
+    description_text = Label(listing_window, text=listing[1] if listing else "", font=("Lora", 12))
+    description_text.config(bg="white", fg="black")
+    description_text.place(x=200, y=260, width=180, height=30)
+
+    back_button = Label(listing_window, text="Back to Main Page", font=("Lora", 12), bg="#809D3C", fg="white")
+    back_button.place(x=10, y=650, width=370, height=40)
+    back_button.bind("<Button-1>", lambda event: (listing_window.destroy(), mainpage.deiconify()))
+    
 def update_mainpage_for_login():
     sign_in_button.place_forget()
     manage_account_button.place(x=270, y=650, width=120, height=40)
