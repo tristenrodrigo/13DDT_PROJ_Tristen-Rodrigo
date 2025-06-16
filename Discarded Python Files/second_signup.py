@@ -1,9 +1,7 @@
 from tkinter import *
 from tkinter import messagebox, StringVar, OptionMenu
-from base import mainpage, cursor, conn
-from su import sign_up_window
+from fisf2.base import mainpage, cursor, conn
 from si import *
-
 
 def male_second_signup_window(first_name, last_name, email, password, gender):
     second_window = Toplevel(sign_up_window)

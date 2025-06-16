@@ -1,10 +1,11 @@
 from tkinter import Tk, Label, Entry, messagebox
-from si import sign_in_page
 import sqlite3
+import fisf1.shared as shared
 
-def mainpage():
-    global mainpage, manage_account_button
-    mainpage = Tk()
+def mainpage_fn():
+    global mainpage, manage_account_button, sign_in_button
+    shared.mainpage = Tk()
+    mainpage = shared.mainpage
     mainpage.title("Loopwear")
     mainpage.geometry("400x700")
     mainpage.config(bg="white")
@@ -20,10 +21,13 @@ def mainpage():
     header_bar.config(bg='#809D3C')
     header_bar.place(x=0, y=60, width=400, height=40)
 
-    # Creating Sign Up Button (placed on top of the header bar)
-    global sign_in_button
+    # Creating Sign In Button
     sign_in_button = Label(mainpage, text="Sign In", font=("Lora", 12), bg="#5D8736", fg="white", anchor="center")
     sign_in_button.place(x=270, y=650, width=120, height=40)
+    def open_sign_in_close_main(event):
+        from fisf2.sip import sign_in_page
+        sign_in_page()
+        mainpage.withdraw()
     sign_in_button.bind("<Button-1>", open_sign_in_close_main)
 
     # Creating Manage Account Button (initially hidden)
@@ -40,7 +44,7 @@ def mainpage():
     search_button.bind("<Button-1>", lambda event: messagebox.showinfo("Info", "Search functionality is under construction."))
 
     # New Listing Button
-    from new_listing import new_listing_page
+    from fisf2.nlp import new_listing_page
     new_listing_button = Label(mainpage, text="Create New Listing", font=("Lora", 12), bg="#809D3C", fg="white", anchor="center")
     new_listing_button.place(x=10, y=650, width=180, height=40)
     new_listing_button.bind("<Button-1>", lambda event: new_listing_page())
@@ -51,7 +55,7 @@ def mainpage():
     clothes_header.bind("<Button-1>", lambda event: messagebox.showinfo("Info", "Clothes section is under construction."))
 
     # listing Image Test
-    from listing import listing_page
+    from fisf2.lp import listing_page
     clothes_listing_image1 = Label(mainpage, text="Listing Image", font=("Lora", 12), bg="black", fg="black")
     clothes_listing_image1.place(x=10, y=180, width=100, height=100)
     clothes_listing_image1.bind("<Button-1>", lambda event: (listing_page(), mainpage.withdraw()))
@@ -76,9 +80,15 @@ def mainpage():
     clothes_listing_image3.place(x=10, y=540, width=100, height=100)
     clothes_listing_image3.bind("<Button-1>", lambda event: (listing_page(), mainpage.withdraw()))
 
+    mainpage.mainloop()
+
 # Create/connect to the database
-conn = sqlite3.connect('listings.db')
-cursor = conn.cursor()
+shared.conn = sqlite3.connect('listings.db')
+shared.cursor = shared.conn.cursor()
+
+# Use shared.cursor and shared.conn for DB operations
+cursor = shared.cursor
+conn = shared.conn
 
 # Create the listings table if it doesn't exist
 cursor.execute('''
@@ -115,9 +125,5 @@ def update_mainpage_for_login():
     sign_in_button.place_forget()
     manage_account_button.place(x=270, y=650, width=120, height=40)
 
-def open_sign_in_close_main(event):
-    sign_in_page()
-    mainpage.withdraw()
-
-# Start the main loop
-mainpage.mainloop()
+if __name__ == "__main__":
+    mainpage_fn()

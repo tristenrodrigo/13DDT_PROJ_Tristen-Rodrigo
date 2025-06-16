@@ -1,4 +1,4 @@
-from base import mainpage, cursor
+from fisf2.base import mainpage, cursor
 from PIL import Image, ImageTk
 from tkinter import Label, Toplevel
 
