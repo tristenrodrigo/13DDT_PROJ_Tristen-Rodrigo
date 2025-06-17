@@ -490,15 +490,8 @@ def new_listing_page():
         conn.commit()
         messagebox.showinfo("Info", "Listing saved successfully!")
         new_listing_window.destroy()
-        if category == "Clothes":
-            clothes_page = clothes_page()
-            clothes_page.deiconify()
-        elif category == "Shoes":
-            shoes_page = shoes_page()
-            shoes_page.deiconify()
-        elif category == "Accessories":
-            accessories_page = accessories_page()
-            accessories_page.deiconify()
+        mainpage.deiconify()
+        display_category_listings()
 
     publish_listing_button = Label(new_listing_window, text="Publish Listing", font=("Lora", 12), bg="#809D3C", fg="white")
     publish_listing_button.place(x=10, y=400, width=370, height=40)
@@ -537,14 +530,45 @@ def clothes_page():
 clothes_header = Label(mainpage, text="Clothes", font=("Lora", 18), bg="#5D8736", fg="white")
 clothes_header.place(x=10, y=120, width=180, height=40)
 clothes_header.bind("<Button-1>", lambda event: (clothes_page(), mainpage.withdraw()))
-cursor.execute("SELECT id, name, image_path FROM listings WHERE category='Clothes'")
-clothes_listings = cursor.fetchall()
-y_offset = 180
-for listing in clothes_listings:
-    img_label = Label(mainpage, text=listing[1], font=("Lora", 12), bg="black", fg="white")
-    img_label.place(x=10, y=y_offset, width=100, height=100)
-    img_label.bind("<Button-1>", lambda event, listing_id=listing[0]: (listing_page(listing_id), mainpage.withdraw()))
-    y_offset += 120
+
+def display_category_listings():
+    # Remove old listing labels if any
+    for widget in mainpage.winfo_children():
+        if getattr(widget, "is_listing_label", False):
+            widget.destroy()
+
+    # Clothes
+    cursor.execute("SELECT id, name, image_path FROM listings WHERE category='Clothes'")
+    clothes_listings = cursor.fetchall()
+    y_offset = 180
+    for listing in clothes_listings:
+        img_label = Label(mainpage, text=listing[1], font=("Lora", 12), bg="black", fg="white")
+        img_label.place(x=10, y=y_offset, width=100, height=100)
+        img_label.is_listing_label = True  # Mark for easy removal
+        img_label.bind("<Button-1>", lambda event, listing_id=listing[0]: (listing_page(listing_id), mainpage.withdraw()))
+        y_offset += 120
+
+    # Shoes
+    cursor.execute("SELECT id, name, image_path FROM listings WHERE category='Shoes'")
+    shoes_listings = cursor.fetchall()
+    y_offset = 360
+    for listing in shoes_listings:
+        img_label = Label(mainpage, text=listing[1], font=("Lora", 12), bg="black", fg="white")
+        img_label.place(x=10, y=y_offset, width=100, height=100)
+        img_label.is_listing_label = True
+        img_label.bind("<Button-1>", lambda event, listing_id=listing[0]: (listing_page(listing_id), mainpage.withdraw()))
+        y_offset += 120
+
+    # Accessories
+    cursor.execute("SELECT id, name, image_path FROM listings WHERE category='Accessories'")
+    accessories_listings = cursor.fetchall()
+    y_offset = 540
+    for listing in accessories_listings:
+        img_label = Label(mainpage, text=listing[1], font=("Lora", 12), bg="black", fg="white")
+        img_label.place(x=10, y=y_offset, width=100, height=100)
+        img_label.is_listing_label = True
+        img_label.bind("<Button-1>", lambda event, listing_id=listing[0]: (listing_page(listing_id), mainpage.withdraw()))
+        y_offset += 120
 
 #listing Image Test
 clothes_listing_image1 = Label(mainpage, text="Listing Image", font=("Lora", 12), bg="black", fg="black")
@@ -664,15 +688,75 @@ def manage_account_page():
         user_info = cursor.fetchone()
 
     # User Information
-    user_info_label = Label(manage_account_window, text="User Information", font=("Lora", 18), bg="white", fg="black")
-    user_info_label.place(x=10, y=260, width=180, height=30)
+    user_info_label = Label(manage_account_window, text="Account Info", font=("Lora", 18), bg="#A9C46C", fg="white")
+    user_info_label.place(x=10, y=100, width=180, height=30)
     if user_info:
         info_text = f"Name: {user_info[0]} {user_info[1]}\nEmail: {user_info[2]}\nGender: {user_info[3]}\nClothing Size: {user_info[4]}\nShoe Size: {user_info[5]}"
     else:
         info_text = "No user info found."
 
     user_info_text = Label(manage_account_window, text=info_text, font=("Lora", 12), bg="white", fg="black", justify="left", anchor="nw")
-    user_info_text.place(x=10, y=300, width=380, height=100)
+    user_info_text.place(x=10, y=200, width=380, height=100)
+
+    #Edit User Information Button
+    edit_info_button = Label(manage_account_window, text="Edit Information", font=("Lora", 12), bg="#809D3C", fg="white")
+    edit_info_button.place(x=10, y=410, width=370, height=40)
+    edit_info_button.bind("<Button-1>", lambda event: edit_user_info())
+
+    def edit_user_info():
+        edit_window = Toplevel(manage_account_window)
+        edit_window.title("Edit User Information")
+        edit_window.geometry("400x700")
+        edit_window.config(bg="white")
+        header = Label(edit_window, text="Edit User Information", font=("Lora", 24), bg="#4F6F52", fg="white")
+        header.place(x=0, y=0, width=400, height=50)
+
+        if user_info:
+            first_name_label = Label(edit_window, text="First Name:", font=("Lora", 12), bg="white", fg="black")
+            first_name_label.place(x=10, y=70, width=100, height=30)
+            first_name_entry = Entry(edit_window, font=("Lora", 12), bg='white', fg="black")
+            first_name_entry.place(x=120, y=70, width=250, height=30)
+            first_name_entry.insert(0, user_info[0])
+
+            last_name_label = Label(edit_window, text="Last Name:", font=("Lora", 12), bg="white", fg="black")
+            last_name_label.place(x=10, y=110, width=100, height=30)
+            last_name_entry = Entry(edit_window, font=("Lora", 12), bg='white', fg="black")
+            last_name_entry.place(x=120, y=110, width=250, height=30)
+            last_name_entry.insert(0, user_info[1])
+
+            email_label = Label(edit_window, text="Email:", font=("Lora", 12), bg="white", fg="black")
+            email_label.place(x=10, y=150, width=100, height=30)
+            email_entry = Entry(edit_window, font=("Lora", 12), bg='white', fg="black")
+            email_entry.place(x=120, y=150, width=250, height=30)
+            email_entry.insert(0, user_info[2])
+
+            password_label = Label(edit_window, text="Password:", font=("Lora", 12), bg="white", fg="black")
+            password_label.place(x=10, y=190, width=100, height=30)
+            password_entry = Entry(edit_window, font=("Lora", 12), show="*", bg='white', fg="black")
+            password_entry.place(x=120, y=190, width=250, height=30)
+
+        def save_info():
+            new_first_name = first_name_entry.get()
+            new_last_name = last_name_entry.get()
+            new_email = email_entry.get()
+            new_password = password_entry.get()
+
+            if not new_first_name or not new_last_name or not new_email or not new_password:
+                messagebox.showwarning("Input Error", "All fields are required.")
+                return
+
+            cursor.execute("UPDATE users SET first_name=?, last_name=?, email=?, password=? WHERE email=?", 
+                           (new_first_name, new_last_name, new_email, new_password, current_user_email))
+            conn.commit()
+            messagebox.showinfo("Success", "User information updated successfully!")
+            edit_window.destroy()
+            manage_account_page()
+
+        #Save Info Button
+        save_info_button = Label(edit_window, text="Save Info", font=("Lora", 12), bg="#809D3C", fg="white")
+        save_info_button.place(x=10, y=230, width=370, height=40)
+        save_info_button.bind("<Button-1>", lambda event: save_info())
+
 
     # Back to Main Page Button
     back_button = Label(manage_account_window, text="Back to Main Page", font=("Lora", 12), bg="#809D3C", fg="white")

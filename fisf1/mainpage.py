@@ -95,7 +95,7 @@ def launch_mainpage():
 
     # New Listing Button
     new_listing_button = Label(mainpage, text="Create New Listing", font=("Lora", 12), bg="#809D3C", fg="white")
-    new_listing_button.place(x=10, y=600, width=180, height=40)
+    new_listing_button.place(x=10, y=650, width=180, height=40)
     def open_new_listing(event):
         from fisf1.newlisting import new_listing_page
         new_listing_page()
