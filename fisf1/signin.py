@@ -33,13 +33,18 @@ def sign_in_page():
             shared.current_user_email = email
             messagebox.showinfo("Success", f"Welcome back, {user[1]}!")
             sign_in_window.destroy()
-            mainpage.deiconify()
+            shared.mainpage.deiconify()
+            shared.update_mainpage_buttons()
         else:
             messagebox.showerror("Error", "Invalid email or password. Please try again.")
 
     sign_in_btn = Label(sign_in_window, text="Sign In", font=("Lora", 12), bg="#809D3C", fg="white")
     sign_in_btn.place(x=20, y=160, width=360, height=30)
     sign_in_btn.bind("<Button-1>", lambda event: check_login())
+
+    sign_up_label = Label(sign_in_window, text="Don't have an account? Sign Up", font=("Lora", 12), bg="white", fg="#809D3C")
+    sign_up_label.place(x=10, y=200, width=380, height=30)
+    sign_up_label.bind("<Button-1>", lambda e: (sign_in_window.destroy(), mainpage.withdraw(), shared.launch_signup_page()))
 
     # Back Button
     back_button = Label(sign_in_window, text="Back", bg="#809D3C", fg="white", font=("Lora", 12))

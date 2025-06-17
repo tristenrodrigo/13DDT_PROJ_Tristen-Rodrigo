@@ -32,4 +32,11 @@ def manage_account_page():
 
     back_button = Label(manage_account_window, text="Back to Main Page", font=("Lora", 12), bg="#809D3C", fg="white")
     back_button.place(x=10, y=650, width=370, height=40)
-    back_button.bind("<Button-1>", lambda event: (manage_account_window.destroy(), mainpage.deiconify()))
+    
+    def handle_back(event):
+        shared.current_user_email = None
+        manage_account_window.destroy()
+        shared.mainpage.deiconify()
+        shared.update_mainpage_buttons()
+
+    back_button.bind("<Button-1>", handle_back)
