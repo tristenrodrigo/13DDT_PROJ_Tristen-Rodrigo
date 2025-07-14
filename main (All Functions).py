@@ -405,6 +405,28 @@ sign_in_button.bind("<Button-1>", open_sign_in_close_main)
 search_bar = Entry(mainpage, font=("Lora", 12), bg="white", fg="black")
 search_bar.place(x=10, y=70, width=250, height=20)
 
+#search functionality
+def display_category_listings():
+    category = "Clothes"  # Example category, you can change this to filter by other categories
+    cursor.execute("SELECT * FROM listings WHERE category=?", (category,))
+    listings = cursor.fetchall()
+    if not listings:
+        messagebox.showinfo("Info", "No listings found in this category.")
+        return
+
+    listings_window = Toplevel(mainpage)
+    listings_window.title(f"{category} Listings")
+    listings_window.geometry("400x700")
+    listings_window.config(bg="white")
+
+    header = Label(listings_window, text=f"{category} Listings", font=("Lora", 24), bg="#4F6F52", fg="white")
+    header.place(x=0, y=0, width=400, height=50)
+
+    for index, listing in enumerate(listings):
+        listing_label = Label(listings_window, text=f"{listing[1]} - {listing[2]}", font=("Lora", 12), bg="white", fg="black")
+        listing_label.place(x=10, y=70 + index * 30, width=380, height=30)
+
+
 #Creating Search Button
 search_button = Label(mainpage, text="Search", font=("Lora", 12), bg="#809D3C", fg="white")
 search_button.place(x=270, y=70, width=120, height=20)
@@ -692,7 +714,7 @@ def manage_account_page():
     #Edit User Information Button
     edit_info_button = Label(manage_account_window, text="Edit Information", font=("Lora", 12), bg="#809D3C", fg="white")
     edit_info_button.place(x=10, y=410, width=370, height=40)
-    edit_info_button.bind("<Button-1>", lambda event: edit_user_info())
+    edit_info_button.bind("<Button-1>", lambda event: edit_user_info(), manage_account_window.withdraw())
 
     def edit_user_info():
         edit_window = Toplevel(manage_account_window)
@@ -746,7 +768,7 @@ def manage_account_page():
         #Save Info Button
         save_info_button = Label(edit_window, text="Save Info", font=("Lora", 12), bg="#809D3C", fg="white")
         save_info_button.place(x=10, y=230, width=370, height=40)
-        save_info_button.bind("<Button-1>", lambda event: save_info())
+        save_info_button.bind("<Button-1>", lambda event: save_info(), manage_account_window.deiconify())
 
     # Back to Main Page Button
     back_button = Label(manage_account_window, text="Back to Main Page", font=("Lora", 12), bg="#809D3C", fg="white")

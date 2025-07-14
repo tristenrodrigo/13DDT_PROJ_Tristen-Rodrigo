@@ -34,7 +34,6 @@ def manage_account_page():
     back_button.place(x=10, y=650, width=370, height=40)
     
     def handle_back(event):
-        shared.current_user_email = None
         manage_account_window.destroy()
         shared.mainpage.deiconify()
         shared.update_mainpage_buttons()

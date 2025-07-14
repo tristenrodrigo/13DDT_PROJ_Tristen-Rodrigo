@@ -38,12 +38,12 @@ def sign_in_page():
         else:
             messagebox.showerror("Error", "Invalid email or password. Please try again.")
 
-    sign_in_btn = Label(sign_in_window, text="Sign In", font=("Lora", 12), bg="#809D3C", fg="white")
-    sign_in_btn.place(x=20, y=160, width=360, height=30)
-    sign_in_btn.bind("<Button-1>", lambda event: check_login())
+    sign_in_button = Label(sign_in_window, text="Sign In", font=("Lora", 12), bg="#809D3C", fg="white")
+    sign_in_button.place(x=20, y=160, width=360, height=30)
+    sign_in_button.bind("<Button-1>", lambda event: check_login())
 
-    sign_up_label = Label(sign_in_window, text="Don't have an account? Sign Up", font=("Lora", 12), bg="white", fg="#809D3C")
-    sign_up_label.place(x=10, y=200, width=380, height=30)
+    sign_up_label = Label(sign_in_window, text="Sign Up", font=("Lora", 12), bg="#809D3C", fg="white")
+    sign_up_label.place(x=20, y=200, width=175, height=30)
     sign_up_label.bind("<Button-1>", lambda e: (sign_in_window.destroy(), mainpage.withdraw(), shared.launch_signup_page()))
 
     # Back Button
