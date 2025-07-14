@@ -11,15 +11,6 @@ current_user_email = None
 conn = sqlite3.connect('listings.db')
 cursor = conn.cursor()
 
-# Check for existing session
-if os.path.exists("session.txt"):
-    with open("session.txt", "r") as f:
-        saved_email = f.read().strip()
-        # Optionally, check if user still exists in DB
-        cursor.execute("SELECT * FROM users WHERE email=?", (saved_email,))
-        if cursor.fetchone():
-            current_user_email = saved_email
- 
 # Create the listings table if it doesn't exist
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS listings (
@@ -58,6 +49,7 @@ try:
     conn.commit()
 except sqlite3.OperationalError:
     pass  # Column already exists
+
 
 mainpage = Tk()
 
@@ -104,7 +96,6 @@ def sign_in_page():
         user = cursor.fetchone()
         if user:
             current_user_email = email
-            # Save session to file
             with open("session.txt", "w") as f:
                 f.write(email)
             messagebox.showinfo("Success", f"Welcome back, {user[1]}!")
@@ -112,7 +103,7 @@ def sign_in_page():
             mainpage.deiconify()
             update_mainpage_for_login()
         else:
-            messagebox.showerror("Error", "Invalid email or password. Please try again.")
+            messagebox.showerror("Error", "Invalid Email or Password. Please try again.")
 
     sign_in_button = Label(sign_in_window, text="Sign In", font=("Lora", 12), bg="#809D3C", fg="white", anchor="center")
     sign_in_button.place(x=20, y=160, width=360, height=30)
@@ -139,36 +130,36 @@ def sign_up_page():
     header.place(x=0, y=0, width=400, height=50)
 
     first_name_label = Label(sign_up_window, text="First Name:*", font=("Lora", 12), bg="white", fg="black")
-    first_name_label.place(x=10, y=110, width=70, height=30)
+    first_name_label.place(x=10, y=75, width=70, height=30)
     first_name_entry = Entry(sign_up_window, font=("Lora", 12), bg='white', fg="black")
-    first_name_entry.place(x=120, y=110, width=250, height=30)
+    first_name_entry.place(x=120, y=75, width=250, height=30)
 
     last_name_label = Label(sign_up_window, text="Last Name:*", font=("Lora", 12), bg="white", fg="black")
-    last_name_label.place(x=10, y=150, width=70, height=30)
+    last_name_label.place(x=10, y=115, width=70, height=30)
     last_name_entry = Entry(sign_up_window, font=("Lora", 12), bg='white', fg="black")
-    last_name_entry.place(x=120, y=150, width=250, height=30)
+    last_name_entry.place(x=120, y=115, width=250, height=30)
 
     email_label = Label(sign_up_window, text="Email:*", font=("Lora", 12), bg="white", fg="black")
-    email_label.place(x=10, y=190, width=70, height=30)
+    email_label.place(x=10, y=155, width=70, height=30)
     email_entry = Entry(sign_up_window, font=("Lora", 12), bg='white', fg="black")
-    email_entry.place(x=120, y=190, width=250, height=30)
+    email_entry.place(x=120, y=155, width=250, height=30)
 
     password_label = Label(sign_up_window, text="Password:*", font=("Lora", 12), bg="white", fg="black")
-    password_label.place(x=10, y=230, width=70, height=30)
+    password_label.place(x=10, y=195, width=70, height=30)
     password_entry = Entry(sign_up_window, font=("Lora", 12), show="*", bg='white', fg="black")
-    password_entry.place(x=120, y=230, width=250, height=30)
+    password_entry.place(x=120, y=195, width=250, height=30)
 
     gender_label = Label(sign_up_window, text="Gender:*", font=("Lora", 12), bg="white", fg="black")
-    gender_label.place(x=10, y=270, width=70, height=30)
+    gender_label.place(x=10, y=235, width=70, height=30)
     gender_options = ["Male", "Female", "Other"]
     gender_var = StringVar(sign_up_window)
     gender_var.set(gender_options[0])
     gender_dropdown = OptionMenu(sign_up_window, gender_var, *gender_options)
     gender_dropdown.config(bg='white', fg="black")
-    gender_dropdown.place(x=120, y=270, width=120, height=30)
+    gender_dropdown.place(x=120, y=235, width=120, height=30)
 
     back_button = Label(sign_up_window, text="Back", bg="#809D3C", fg="white", font=("Lora", 12))
-    back_button.place(x=10, y=310, width=180, height=30)
+    back_button.place(x=10, y=315, width=180, height=30)
     back_button.bind("<Button-1>", lambda e: (sign_up_window.destroy(), sign_in_page()))
 
     def male_second_signup_window():
@@ -398,7 +389,7 @@ def sign_up_page():
 
     # Continue Button to the next page
     continue_button = Label(sign_up_window, text="Continue", font=("Lora", 12), bg="#809D3C", fg="white")
-    continue_button.place(x=200, y=310, width=180, height=30)
+    continue_button.place(x=200, y=315, width=180, height=30)
     continue_button.bind("<Button-1>", lambda e: handle_continue())
 
 def open_sign_in_close_main(event):
@@ -756,7 +747,6 @@ def manage_account_page():
         save_info_button = Label(edit_window, text="Save Info", font=("Lora", 12), bg="#809D3C", fg="white")
         save_info_button.place(x=10, y=230, width=370, height=40)
         save_info_button.bind("<Button-1>", lambda event: save_info())
-
 
     # Back to Main Page Button
     back_button = Label(manage_account_window, text="Back to Main Page", font=("Lora", 12), bg="#809D3C", fg="white")
