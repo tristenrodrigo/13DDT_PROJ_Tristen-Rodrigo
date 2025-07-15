@@ -2,7 +2,7 @@ import sqlite3
 import fisf1.shared as shared
 
 def setup_db():
-    shared.conn = sqlite3.connect('listings.db')
+    shared.conn = sqlite3.connect('Main.db')
     shared.cursor = shared.conn.cursor()
     cursor = shared.cursor
     conn = shared.conn

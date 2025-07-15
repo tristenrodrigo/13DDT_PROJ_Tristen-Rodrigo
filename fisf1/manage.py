@@ -1,4 +1,4 @@
-from tkinter import Toplevel, Label, messagebox
+from tkinter import Toplevel, Label
 import fisf1.shared as shared
 
 def manage_account_page():

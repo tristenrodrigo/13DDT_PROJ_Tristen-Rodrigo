@@ -8,10 +8,10 @@ import os
 current_user_email = None
 
 # Create/connect to the database
-conn = sqlite3.connect('.db')
+conn = sqlite3.connect('Main.db')
 cursor = conn.cursor()
 
-# Create the listings table if it doesn't exist
+# Create the listings table
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS listings (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -21,7 +21,7 @@ cursor.execute('''
 ''')
 conn.commit()
 
-# Create the users table if it doesn't exist
+# Create the users table
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -49,7 +49,6 @@ try:
     conn.commit()
 except sqlite3.OperationalError:
     pass  # Column already exists
-
 
 mainpage = Tk()
 
