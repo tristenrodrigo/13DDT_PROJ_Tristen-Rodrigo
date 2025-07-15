@@ -1,5 +1,5 @@
 from tkinter import Toplevel, Label
-import fisf1.shared as shared
+import cisf.shared as shared
 
 def manage_account_page():
     mainpage = shared.mainpage

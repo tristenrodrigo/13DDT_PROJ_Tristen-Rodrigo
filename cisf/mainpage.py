@@ -1,6 +1,6 @@
 from tkinter import Tk, Label, Toplevel
-import fisf1.shared as shared
-from fisf1.listings import listing_page
+import cisf.shared as shared
+from cisf.listings import listing_page
 
 def launch_mainpage():
     shared.mainpage = Tk()
@@ -95,7 +95,7 @@ def launch_mainpage():
     sign_in_button = Label(mainpage, text="Sign In", font=("Lora", 12), bg="#5D8736", fg="white")
     sign_in_button.place(x=270, y=650, width=120, height=40)
     def open_sign_in(event):
-        from fisf1.signin import sign_in_page
+        from cisf.signin import sign_in_page
         sign_in_page()
         mainpage.withdraw()
     sign_in_button.bind("<Button-1>", open_sign_in)
@@ -104,7 +104,7 @@ def launch_mainpage():
     manage_account_button = Label(mainpage, text="Manage Account", font=("Lora", 12), bg="#5D8736", fg="white")
     manage_account_button.place(x=270, y=650, width=180, height=40)
     def open_manage_account(event):
-        from fisf1.manage import manage_account_page
+        from cisf.manage import manage_account_page
         manage_account_page()
         mainpage.withdraw()
     manage_account_button.bind("<Button-1>", open_manage_account)
@@ -113,7 +113,7 @@ def launch_mainpage():
     new_listing_button = Label(mainpage, text="Create New Listing", font=("Lora", 12), bg="#809D3C", fg="white")
     new_listing_button.place(x=10, y=650, width=180, height=40)
     def open_new_listing(event):
-        from fisf1.listings import new_listing_page
+        from cisf.listings import new_listing_page
         new_listing_page()
         mainpage.withdraw()
     new_listing_button.bind("<Button-1>", open_new_listing)

@@ -1,5 +1,5 @@
 from tkinter import Toplevel, Label, Entry, messagebox, StringVar, OptionMenu
-import fisf1.shared as shared
+import cisf.shared as shared
 
 def sign_in_page():
     mainpage = shared.mainpage

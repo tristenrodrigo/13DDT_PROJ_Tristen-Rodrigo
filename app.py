@@ -1,5 +1,5 @@
-import fisf1.db as db
-import fisf1.mainpage as mainpage
+import cisf.db as db
+import cisf.mainpage as mainpage
 
 def main():
     db.setup_db()

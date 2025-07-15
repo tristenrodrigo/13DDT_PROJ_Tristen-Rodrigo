@@ -1,5 +1,5 @@
 import sqlite3
-import fisf1.shared as shared
+import cisf.shared as shared
 
 def setup_db():
     shared.conn = sqlite3.connect('Main.db')

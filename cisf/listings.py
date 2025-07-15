@@ -1,6 +1,6 @@
 from tkinter import Toplevel, Label, Entry, StringVar, OptionMenu, filedialog, messagebox
 from PIL import Image, ImageTk
-import fisf1.shared as shared
+import cisf.shared as shared
 
 def new_listing_page():
     mainpage = shared.mainpage
