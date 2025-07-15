@@ -247,5 +247,5 @@ def sign_up_page():
 
     # Continue Button to the next page
     continue_button = Label(sign_up_window, text="Continue", font=("Lora", 12), bg="#809D3C", fg="white")
-    continue_button.place(x=200, y=315, width=180, height=30)
+    continue_button.place(x=200, y=310, width=180, height=30)
     continue_button.bind("<Button-1>", lambda e: handle_continue())

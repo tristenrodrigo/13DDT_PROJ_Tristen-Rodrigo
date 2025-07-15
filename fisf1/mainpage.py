@@ -1,5 +1,6 @@
 from tkinter import Tk, Label, Toplevel
 import fisf1.shared as shared
+from fisf1.listings import listing_page
 
 def launch_mainpage():
     shared.mainpage = Tk()
@@ -35,6 +36,11 @@ def launch_mainpage():
     clothes_header.place(x=10, y=120, width=180, height=40)
     clothes_header.bind("<Button-1>", lambda event: (clothes_page(), mainpage.withdraw()))
 
+    #listing Image Test
+    clothes_listing_image1 = Label(mainpage, text="Listing Image", font=("Lora", 12), bg="black", fg="black")
+    clothes_listing_image1.place(x=10, y=180, width=100, height=100)
+    clothes_listing_image1.bind("<Button-1>", lambda event: (listing_page(), mainpage.withdraw()))
+
     def shoes_page():
         shoes_window = Toplevel(mainpage)
         shoes_window.title("Shoes")
@@ -55,6 +61,11 @@ def launch_mainpage():
     shoes_header.place(x=10, y=300, width=180, height=40)
     shoes_header.bind("<Button-1>", lambda event: (shoes_page(), mainpage.withdraw()))
 
+    #listing Image Test
+    Shoes_listing_image2 = Label(mainpage, text="Listing Image", font=("Lora", 12), bg="black", fg="black")
+    Shoes_listing_image2.place(x=10, y=360, width=100, height=100)
+    Shoes_listing_image2.bind("<Button-1>", lambda event: (listing_page(), mainpage.withdraw()))
+
     def accessories_page():
         accessories_window = Toplevel(mainpage)
         accessories_window.title("Accessories")
@@ -74,6 +85,11 @@ def launch_mainpage():
     accessories_header = Label(mainpage, text="Accessories", font=("Lora", 18), bg="#5D8736", fg="white")
     accessories_header.place(x=10, y=480, width=180, height=40)
     accessories_header.bind("<Button-1>", lambda event: (accessories_page(), mainpage.withdraw()))
+
+    #listing Image Test
+    accessories_listing_image3 = Label(mainpage, text="Listing Image", font=("Lora", 12), bg="black", fg="black")
+    accessories_listing_image3.place(x=10, y=540, width=100, height=100)
+    accessories_listing_image3.bind("<Button-1>", lambda event: (listing_page(), mainpage.withdraw()))
 
     # Sign In Button
     sign_in_button = Label(mainpage, text="Sign In", font=("Lora", 12), bg="#5D8736", fg="white")
@@ -97,7 +113,7 @@ def launch_mainpage():
     new_listing_button = Label(mainpage, text="Create New Listing", font=("Lora", 12), bg="#809D3C", fg="white")
     new_listing_button.place(x=10, y=650, width=180, height=40)
     def open_new_listing(event):
-        from fisf1.newlisting import new_listing_page
+        from fisf1.listings import new_listing_page
         new_listing_page()
         mainpage.withdraw()
     new_listing_button.bind("<Button-1>", open_new_listing)

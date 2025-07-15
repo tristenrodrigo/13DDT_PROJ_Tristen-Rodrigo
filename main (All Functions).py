@@ -345,7 +345,6 @@ def display_category_listings():
         listing_label = Label(listings_window, text=f"{listing[1]} - {listing[2]}", font=("Lora", 12), bg="white", fg="black")
         listing_label.place(x=10, y=70 + index * 30, width=380, height=30)
 
-
 #Creating Search Button
 search_button = Label(mainpage, text="Search", font=("Lora", 12), bg="#809D3C", fg="white")
 search_button.place(x=270, y=70, width=120, height=20)
@@ -463,45 +462,6 @@ clothes_header = Label(mainpage, text="Clothes", font=("Lora", 18), bg="#5D8736"
 clothes_header.place(x=10, y=120, width=180, height=40)
 clothes_header.bind("<Button-1>", lambda event: (clothes_page(), mainpage.withdraw()))
 
-def display_category_listings():
-    # Remove old listing labels if any
-    for widget in mainpage.winfo_children():
-        if getattr(widget, "is_listing_label", False):
-            widget.destroy()
-
-    # Clothes
-    cursor.execute("SELECT id, name, image_path FROM listings WHERE category='Clothes'")
-    clothes_listings = cursor.fetchall()
-    y_offset = 180
-    for listing in clothes_listings:
-        img_label = Label(mainpage, text=listing[1], font=("Lora", 12), bg="black", fg="white")
-        img_label.place(x=10, y=y_offset, width=100, height=100)
-        img_label.is_listing_label = True  # Mark for easy removal
-        img_label.bind("<Button-1>", lambda event, listing_id=listing[0]: (listing_page(listing_id), mainpage.withdraw()))
-        y_offset += 120
-
-    # Shoes
-    cursor.execute("SELECT id, name, image_path FROM listings WHERE category='Shoes'")
-    shoes_listings = cursor.fetchall()
-    y_offset = 360
-    for listing in shoes_listings:
-        img_label = Label(mainpage, text=listing[1], font=("Lora", 12), bg="black", fg="white")
-        img_label.place(x=10, y=y_offset, width=100, height=100)
-        img_label.is_listing_label = True
-        img_label.bind("<Button-1>", lambda event, listing_id=listing[0]: (listing_page(listing_id), mainpage.withdraw()))
-        y_offset += 120
-
-    # Accessories
-    cursor.execute("SELECT id, name, image_path FROM listings WHERE category='Accessories'")
-    accessories_listings = cursor.fetchall()
-    y_offset = 540
-    for listing in accessories_listings:
-        img_label = Label(mainpage, text=listing[1], font=("Lora", 12), bg="black", fg="white")
-        img_label.place(x=10, y=y_offset, width=100, height=100)
-        img_label.is_listing_label = True
-        img_label.bind("<Button-1>", lambda event, listing_id=listing[0]: (listing_page(listing_id), mainpage.withdraw()))
-        y_offset += 120
-
 #listing Image Test
 clothes_listing_image1 = Label(mainpage, text="Listing Image", font=("Lora", 12), bg="black", fg="black")
 clothes_listing_image1.place(x=10, y=180, width=100, height=100)
@@ -556,6 +516,45 @@ accessories_header.bind("<Button-1>", lambda event: (accessories_page(), mainpag
 accessories_listing_image3 = Label(mainpage, text="Listing Image", font=("Lora", 12), bg="black", fg="black")
 accessories_listing_image3.place(x=10, y=540, width=100, height=100)
 accessories_listing_image3.bind("<Button-1>", lambda event: (listing_page(), mainpage.withdraw()))
+
+def display_category_listings():
+    # Remove old listing labels if any
+    for widget in mainpage.winfo_children():
+        if getattr(widget, "is_listing_label", False):
+            widget.destroy()
+
+    # Clothes
+    cursor.execute("SELECT id, name, image_path FROM listings WHERE category='Clothes'")
+    clothes_listings = cursor.fetchall()
+    y_offset = 180
+    for listing in clothes_listings:
+        img_label = Label(mainpage, text=listing[1], font=("Lora", 12), bg="black", fg="white")
+        img_label.place(x=10, y=y_offset, width=100, height=100)
+        img_label.is_listing_label = True  # Mark for easy removal
+        img_label.bind("<Button-1>", lambda event, listing_id=listing[0]: (listing_page(listing_id), mainpage.withdraw()))
+        y_offset += 120
+
+    # Shoes
+    cursor.execute("SELECT id, name, image_path FROM listings WHERE category='Shoes'")
+    shoes_listings = cursor.fetchall()
+    y_offset = 360
+    for listing in shoes_listings:
+        img_label = Label(mainpage, text=listing[1], font=("Lora", 12), bg="black", fg="white")
+        img_label.place(x=10, y=y_offset, width=100, height=100)
+        img_label.is_listing_label = True
+        img_label.bind("<Button-1>", lambda event, listing_id=listing[0]: (listing_page(listing_id), mainpage.withdraw()))
+        y_offset += 120
+
+    # Accessories
+    cursor.execute("SELECT id, name, image_path FROM listings WHERE category='Accessories'")
+    accessories_listings = cursor.fetchall()
+    y_offset = 540
+    for listing in accessories_listings:
+        img_label = Label(mainpage, text=listing[1], font=("Lora", 12), bg="black", fg="white")
+        img_label.place(x=10, y=y_offset, width=100, height=100)
+        img_label.is_listing_label = True
+        img_label.bind("<Button-1>", lambda event, listing_id=listing[0]: (listing_page(listing_id), mainpage.withdraw()))
+        y_offset += 120
 
 def listing_page(listing_id=None):
     listing_window = Toplevel(mainpage)
@@ -720,7 +719,7 @@ def manage_account_page():
         update_mainpage_for_logout()
     sign_out_button.bind("<Button-1>", handle_sign_out)
 
-manage_account_button = Label(mainpage, text="Manage Account", font=("Lora", 12), bg="#5D8736", fg="white", anchor="w")
+manage_account_button = Label(mainpage, text="Manage Account", font=("Lora", 12), bg="#5D8736", fg="white", anchor="center")
 def manage_account(event):
     global current_user_email
     if current_user_email:
