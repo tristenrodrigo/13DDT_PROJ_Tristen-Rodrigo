@@ -46,17 +46,18 @@ def new_listing_page():
 
     item_description_label = Label(new_listing_window, text="Item Description:", font=("Lora", 12), bg="white", fg="black")
     item_description_label.place(x=10, y=300, width=100, height=30)
+
     item_description_entry = Entry(new_listing_window, font=("Lora", 12), bg='white', fg="black")
-    item_description_entry.place(x=200, y=300, width=180, height=30)
+    item_description_entry.place(x=200, y=300, width=180, height=50)
 
     category_label = Label(new_listing_window, text="Item Category:*", font=("Lora", 12), bg="white", fg="black")
-    category_label.place(x=10, y=340, width=100, height=30)
+    category_label.place(x=10, y=360, width=100, height=30)
     category_options = ["Clothes", "Shoes", "Accessories"]
     category_var = StringVar(new_listing_window)
-    category_var.set(category_options[0])
+    category_var.set("Select Category") # Default value
     category_dropdown = OptionMenu(new_listing_window, category_var, *category_options)
     category_dropdown.config(bg='white', fg="black")
-    category_dropdown.place(x=120, y=340, width=120, height=30)
+    category_dropdown.place(x=120, y=360, width=120, height=30)
 
     def save_listing():
         name = item_name_entry.get()

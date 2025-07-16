@@ -1,7 +1,6 @@
 from tkinter import Label, Entry, messagebox, Toplevel, StringVar, OptionMenu,Tk, filedialog
 from PIL import Image, ImageTk
 import sqlite3
-import time
 import os
 
 # Initialize current_user_email
@@ -324,31 +323,53 @@ sign_in_button.bind("<Button-1>", open_sign_in_close_main)
 search_bar = Entry(mainpage, font=("Lora", 12), bg="white", fg="black")
 search_bar.place(x=10, y=70, width=250, height=20)
 
-#search functionality
+#Display listings based on category
 def display_category_listings():
-    category = "Clothes"  # Example category, you can change this to filter by other categories
-    cursor.execute("SELECT * FROM listings WHERE category=?", (category,))
-    listings = cursor.fetchall()
-    if not listings:
-        messagebox.showinfo("Info", "No listings found in this category.")
-        return
+    # Remove old listing labels if any
+    for widget in mainpage.winfo_children():
+        if getattr(widget, "is_listing_label", False):
+            widget.destroy()
 
-    listings_window = Toplevel(mainpage)
-    listings_window.title(f"{category} Listings")
-    listings_window.geometry("400x700")
-    listings_window.config(bg="white")
+    # Clothes
+    cursor.execute("SELECT id, name, image_path FROM listings WHERE category='Clothes'")
+    clothes_listings = cursor.fetchall()
+    x_offset = 120
+    y_fixed = 180
+    for listing in clothes_listings:
+        img_label = Label(mainpage, text=listing[1], font=("Lora", 12), bg="black", fg="white")
+        img_label.place(x=x_offset, y=y_fixed, width=100, height=100)
+        img_label.is_listing_label = True
+        img_label.bind("<Button-1>", lambda event, listing_id=listing[0]: (listing_page(listing_id), mainpage.withdraw()))
+        x_offset += 120  # Move right for next listing
 
-    header = Label(listings_window, text=f"{category} Listings", font=("Lora", 24), bg="#4F6F52", fg="white")
-    header.place(x=0, y=0, width=400, height=50)
+    # Shoes
+    cursor.execute("SELECT id, name, image_path FROM listings WHERE category='Shoes'")
+    shoes_listings = cursor.fetchall()
+    x_offset = 120
+    y_fixed = 360
+    for listing in shoes_listings:
+        img_label = Label(mainpage, text=listing[1], font=("Lora", 12), bg="black", fg="white")
+        img_label.place(x=x_offset, y=y_fixed, width=100, height=100)
+        img_label.is_listing_label = True
+        img_label.bind("<Button-1>", lambda event, listing_id=listing[0]: (listing_page(listing_id), mainpage.withdraw()))
+        x_offset += 120
 
-    for index, listing in enumerate(listings):
-        listing_label = Label(listings_window, text=f"{listing[1]} - {listing[2]}", font=("Lora", 12), bg="white", fg="black")
-        listing_label.place(x=10, y=70 + index * 30, width=380, height=30)
+    # Accessories
+    cursor.execute("SELECT id, name, image_path FROM listings WHERE category='Accessories'")
+    accessories_listings = cursor.fetchall()
+    x_offset = 120
+    y_fixed = 540
+    for listing in accessories_listings:
+        img_label = Label(mainpage, text=listing[1], font=("Lora", 12), bg="black", fg="white")
+        img_label.place(x=x_offset, y=y_fixed, width=100, height=100)
+        img_label.is_listing_label = True
+        img_label.bind("<Button-1>", lambda event, listing_id=listing[0]: (listing_page(listing_id), mainpage.withdraw()))
+        x_offset += 120
 
 #Creating Search Button
 search_button = Label(mainpage, text="Search", font=("Lora", 12), bg="#809D3C", fg="white")
 search_button.place(x=270, y=70, width=120, height=20)
-search_button.bind("<Button-1>", lambda event: messagebox.showinfo("Info", "Search functionality is under construction."))
+search_button.bind("<Button-1>", lambda event: display_category_listings())
 
 def new_listing_page():
     new_listing_window = Toplevel(mainpage)
@@ -462,11 +483,6 @@ clothes_header = Label(mainpage, text="Clothes", font=("Lora", 18), bg="#5D8736"
 clothes_header.place(x=10, y=120, width=180, height=40)
 clothes_header.bind("<Button-1>", lambda event: (clothes_page(), mainpage.withdraw()))
 
-#listing Image Test
-clothes_listing_image1 = Label(mainpage, text="Listing Image", font=("Lora", 12), bg="black", fg="black")
-clothes_listing_image1.place(x=10, y=180, width=100, height=100)
-clothes_listing_image1.bind("<Button-1>", lambda event: (listing_page(), mainpage.withdraw()))
-
 def shoes_page():
     shoes_window = Toplevel(mainpage)
     shoes_window.title("Shoes")
@@ -486,11 +502,6 @@ def shoes_page():
 shoes_header = Label(mainpage, text="Shoes", font=("Lora", 18), bg="#5D8736", fg="white")
 shoes_header.place(x=10, y=300, width=180, height=40)
 shoes_header.bind("<Button-1>", lambda event: (shoes_page(), mainpage.withdraw()))
-
-#listing Image Test
-Shoes_listing_image2 = Label(mainpage, text="Listing Image", font=("Lora", 12), bg="black", fg="black")
-Shoes_listing_image2.place(x=10, y=360, width=100, height=100)
-Shoes_listing_image2.bind("<Button-1>", lambda event: (listing_page(), mainpage.withdraw()))
 
 def accessories_page():
     accessories_window = Toplevel(mainpage)
@@ -512,11 +523,6 @@ accessories_header = Label(mainpage, text="Accessories", font=("Lora", 18), bg="
 accessories_header.place(x=10, y=480, width=180, height=40)
 accessories_header.bind("<Button-1>", lambda event: (accessories_page(), mainpage.withdraw()))
 
-#listing Image Test
-accessories_listing_image3 = Label(mainpage, text="Listing Image", font=("Lora", 12), bg="black", fg="black")
-accessories_listing_image3.place(x=10, y=540, width=100, height=100)
-accessories_listing_image3.bind("<Button-1>", lambda event: (listing_page(), mainpage.withdraw()))
-
 def display_category_listings():
     # Remove old listing labels if any
     for widget in mainpage.winfo_children():
@@ -526,35 +532,38 @@ def display_category_listings():
     # Clothes
     cursor.execute("SELECT id, name, image_path FROM listings WHERE category='Clothes'")
     clothes_listings = cursor.fetchall()
-    y_offset = 180
+    x_offset = 200  # Start to the right of the header
+    y_fixed = 180
     for listing in clothes_listings:
         img_label = Label(mainpage, text=listing[1], font=("Lora", 12), bg="black", fg="white")
-        img_label.place(x=10, y=y_offset, width=100, height=100)
-        img_label.is_listing_label = True  # Mark for easy removal
+        img_label.place(x=x_offset, y=y_fixed, width=100, height=100)
+        img_label.is_listing_label = True
         img_label.bind("<Button-1>", lambda event, listing_id=listing[0]: (listing_page(listing_id), mainpage.withdraw()))
-        y_offset += 120
+        x_offset += 120  # Move right for next listing
 
     # Shoes
     cursor.execute("SELECT id, name, image_path FROM listings WHERE category='Shoes'")
     shoes_listings = cursor.fetchall()
-    y_offset = 360
+    x_offset = 200
+    y_fixed = 360
     for listing in shoes_listings:
         img_label = Label(mainpage, text=listing[1], font=("Lora", 12), bg="black", fg="white")
-        img_label.place(x=10, y=y_offset, width=100, height=100)
+        img_label.place(x=x_offset, y=y_fixed, width=100, height=100)
         img_label.is_listing_label = True
         img_label.bind("<Button-1>", lambda event, listing_id=listing[0]: (listing_page(listing_id), mainpage.withdraw()))
-        y_offset += 120
+        x_offset += 120
 
     # Accessories
     cursor.execute("SELECT id, name, image_path FROM listings WHERE category='Accessories'")
     accessories_listings = cursor.fetchall()
-    y_offset = 540
+    x_offset = 200
+    y_fixed = 540
     for listing in accessories_listings:
         img_label = Label(mainpage, text=listing[1], font=("Lora", 12), bg="black", fg="white")
-        img_label.place(x=10, y=y_offset, width=100, height=100)
+        img_label.place(x=x_offset, y=y_fixed, width=100, height=100)
         img_label.is_listing_label = True
         img_label.bind("<Button-1>", lambda event, listing_id=listing[0]: (listing_page(listing_id), mainpage.withdraw()))
-        y_offset += 120
+        x_offset += 120
 
 def listing_page(listing_id=None):
     listing_window = Toplevel(mainpage)
@@ -746,5 +755,6 @@ if os.path.exists("session.txt"):
                 pass
         else:
             current_user_email = None
+
 
 mainpage.mainloop()

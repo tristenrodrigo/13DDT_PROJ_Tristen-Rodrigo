@@ -1,4 +1,4 @@
-from tkinter import Tk, Label, Toplevel
+from tkinter import Tk, Label, Toplevel, Entry
 import cisf.shared as shared
 from cisf.listings import listing_page
 
@@ -15,6 +15,10 @@ def launch_mainpage():
 
     header_bar = Label(mainpage, bg='#809D3C')
     header_bar.place(x=0, y=60, width=400, height=40)
+
+    #Search Bar
+    search_bar = Entry(mainpage, font=("Lora", 12), bg="white", fg="black")
+    search_bar.place(x=10, y=70, width=250, height=20)
 
     def clothes_page():
         clothes_window = Toplevel(mainpage)
@@ -36,11 +40,6 @@ def launch_mainpage():
     clothes_header.place(x=10, y=120, width=180, height=40)
     clothes_header.bind("<Button-1>", lambda event: (clothes_page(), mainpage.withdraw()))
 
-    #listing Image Test
-    clothes_listing_image1 = Label(mainpage, text="Listing Image", font=("Lora", 12), bg="black", fg="black")
-    clothes_listing_image1.place(x=10, y=180, width=100, height=100)
-    clothes_listing_image1.bind("<Button-1>", lambda event: (listing_page(), mainpage.withdraw()))
-
     def shoes_page():
         shoes_window = Toplevel(mainpage)
         shoes_window.title("Shoes")
@@ -60,11 +59,6 @@ def launch_mainpage():
     shoes_header = Label(mainpage, text="Shoes", font=("Lora", 18), bg="#5D8736", fg="white")
     shoes_header.place(x=10, y=300, width=180, height=40)
     shoes_header.bind("<Button-1>", lambda event: (shoes_page(), mainpage.withdraw()))
-
-    #listing Image Test
-    Shoes_listing_image2 = Label(mainpage, text="Listing Image", font=("Lora", 12), bg="black", fg="black")
-    Shoes_listing_image2.place(x=10, y=360, width=100, height=100)
-    Shoes_listing_image2.bind("<Button-1>", lambda event: (listing_page(), mainpage.withdraw()))
 
     def accessories_page():
         accessories_window = Toplevel(mainpage)
@@ -86,11 +80,6 @@ def launch_mainpage():
     accessories_header.place(x=10, y=480, width=180, height=40)
     accessories_header.bind("<Button-1>", lambda event: (accessories_page(), mainpage.withdraw()))
 
-    #listing Image Test
-    accessories_listing_image3 = Label(mainpage, text="Listing Image", font=("Lora", 12), bg="black", fg="black")
-    accessories_listing_image3.place(x=10, y=540, width=100, height=100)
-    accessories_listing_image3.bind("<Button-1>", lambda event: (listing_page(), mainpage.withdraw()))
-
     # Sign In Button
     sign_in_button = Label(mainpage, text="Sign In", font=("Lora", 12), bg="#5D8736", fg="white")
     sign_in_button.place(x=270, y=650, width=120, height=40)
@@ -102,7 +91,7 @@ def launch_mainpage():
 
     # Manage Account Button
     manage_account_button = Label(mainpage, text="Manage Account", font=("Lora", 12), bg="#5D8736", fg="white")
-    manage_account_button.place(x=270, y=650, width=180, height=40)
+    manage_account_button.place(x=270, y=650, width=120, height=40)
     def open_manage_account(event):
         from cisf.manage import manage_account_page
         manage_account_page()
@@ -131,3 +120,47 @@ def launch_mainpage():
     shared.update_mainpage_buttons = update_buttons  # So other modules can call it
 
     mainpage.mainloop()
+
+def display_category_listings():
+    cursor = shared.cursor
+    mainpage = shared.mainpage
+
+    for widget in mainpage.winfo_children():
+        if getattr(widget, "is_listing_label", False):
+            widget.destroy()
+
+    # Clothes
+    cursor.execute("SELECT id, name, image_path FROM listings WHERE category='Clothes'")
+    clothes_listings = cursor.fetchall()
+    x_offset = 120
+    y_fixed = 180
+    for listing in clothes_listings:
+        img_label = Label(mainpage, text=listing[1], font=("Lora", 12), bg="black", fg="white")
+        img_label.place(x=x_offset, y=y_fixed, width=100, height=100)
+        img_label.is_listing_label = True
+        img_label.bind("<Button-1>", lambda event, listing_id=listing[0]: (listing_page(listing_id), mainpage.withdraw()))
+        x_offset += 120
+
+    # Shoes
+    cursor.execute("SELECT id, name, image_path FROM listings WHERE category='Shoes'")
+    shoes_listings = cursor.fetchall()
+    x_offset = 120
+    y_fixed = 360
+    for listing in shoes_listings:
+        img_label = Label(mainpage, text=listing[1], font=("Lora", 12), bg="black", fg="white")
+        img_label.place(x=x_offset, y=y_fixed, width=100, height=100)
+        img_label.is_listing_label = True
+        img_label.bind("<Button-1>", lambda event, listing_id=listing[0]: (listing_page(listing_id), mainpage.withdraw()))
+        x_offset += 120
+
+    # Accessories
+    cursor.execute("SELECT id, name, image_path FROM listings WHERE category='Accessories'")
+    accessories_listings = cursor.fetchall()
+    x_offset = 120
+    y_fixed = 540
+    for listing in accessories_listings:
+        img_label = Label(mainpage, text=listing[1], font=("Lora", 12), bg="black", fg="white")
+        img_label.place(x=x_offset, y=y_fixed, width=100, height=100)
+        img_label.is_listing_label = True
+        img_label.bind("<Button-1>", lambda event, listing_id=listing[0]: (listing_page(listing_id), mainpage.withdraw()))
+        x_offset += 120
