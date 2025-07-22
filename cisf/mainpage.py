@@ -54,19 +54,30 @@ def launch_mainpage():
 
     # Clothes Page
     def clothes_page():
-        clothes_window = Toplevel(mainpage)
+        clothes_window = Toplevel(shared.mainpage)
         clothes_window.title("Clothes")
         clothes_window.geometry("400x700")
         clothes_window.config(bg="white")
 
-        header = Label(clothes_window, text="Clothes", font=("Lora", 24))
-        header.config(bg="#4F6F52", fg="white")
+        header = Label(clothes_window, text="Clothes", font=("Lora", 24), bg="#4F6F52", fg="white")
         header.place(x=0, y=0, width=400, height=50)
 
         # Back Button
         back_button = Label(clothes_window, text="Back to Main Page", font=("Lora", 12), bg="#809D3C", fg="white")
         back_button.place(x=10, y=650, width=370, height=40)
-        back_button.bind("<Button-1>", lambda event: (clothes_window.destroy(), mainpage.deiconify()))
+        back_button.bind("<Button-1>", lambda event: (clothes_window.destroy(), shared.mainpage.deiconify()))
+
+        # Display Clothes Listings
+        cursor = shared.cursor
+        cursor.execute("SELECT id, name, image_path FROM listings WHERE category='Clothes'")
+        listings = cursor.fetchall()
+        x_offset = 10
+        y_fixed = 70
+        for listing in listings:
+            img_label = Label(clothes_window, text=listing[1], font=("Lora", 12), bg="black", fg="white")
+            img_label.place(x=x_offset, y=y_fixed, width=100, height=100)
+            img_label.bind("<Button-1>", lambda event, listing_id=listing[0]: (listing_page(listing_id), clothes_window.withdraw()))
+            x_offset += 120
 
     # Creating Clothes Header
     clothes_header = Label(mainpage, text="Clothes", font=("Lora", 18), bg="#5D8736", fg="white")
@@ -75,19 +86,29 @@ def launch_mainpage():
 
     # Shoes Page
     def shoes_page():
-        shoes_window = Toplevel(mainpage)
+        shoes_window = Toplevel(shared.mainpage)
         shoes_window.title("Shoes")
         shoes_window.geometry("400x700")
         shoes_window.config(bg="white")
 
-        header = Label(shoes_window, text="Shoes", font=("Lora", 24))
-        header.config(bg="#4F6F52", fg="white")
+        header = Label(shoes_window, text="Shoes", font=("Lora", 24), bg="#4F6F52", fg="white")
         header.place(x=0, y=0, width=400, height=50)
 
-        # Back Button
         back_button = Label(shoes_window, text="Back to Main Page", font=("Lora", 12), bg="#809D3C", fg="white")
         back_button.place(x=10, y=650, width=370, height=40)
-        back_button.bind("<Button-1>", lambda event: (shoes_window.destroy(), mainpage.deiconify()))
+        back_button.bind("<Button-1>", lambda event: (shoes_window.destroy(), shared.mainpage.deiconify()))
+
+        # Display Shoes Listings
+        cursor = shared.cursor
+        cursor.execute("SELECT id, name, image_path FROM listings WHERE category='Shoes'")
+        listings = cursor.fetchall()
+        x_offset = 10
+        y_fixed = 70
+        for listing in listings:
+            img_label = Label(shoes_window, text=listing[1], font=("Lora", 12), bg="black", fg="white")
+            img_label.place(x=x_offset, y=y_fixed, width=100, height=100)
+            img_label.bind("<Button-1>", lambda event, listing_id=listing[0]: (listing_page(listing_id), shoes_window.withdraw()))
+            x_offset += 120
 
     # Creating Shoes Header
     shoes_header = Label(mainpage, text="Shoes", font=("Lora", 18), bg="#5D8736", fg="white")
@@ -96,19 +117,29 @@ def launch_mainpage():
 
     # Accessories Page
     def accessories_page():
-        accessories_window = Toplevel(mainpage)
+        accessories_window = Toplevel(shared.mainpage)
         accessories_window.title("Accessories")
         accessories_window.geometry("400x700")
         accessories_window.config(bg="white")
 
-        header = Label(accessories_window, text="Accessories", font=("Lora", 24))
-        header.config(bg="#4F6F52", fg="white")
+        header = Label(accessories_window, text="Accessories", font=("Lora", 24), bg="#4F6F52", fg="white")
         header.place(x=0, y=0, width=400, height=50)
 
-        # Back Button
         back_button = Label(accessories_window, text="Back to Main Page", font=("Lora", 12), bg="#809D3C", fg="white")
         back_button.place(x=10, y=650, width=370, height=40)
-        back_button.bind("<Button-1>", lambda event: (accessories_window.destroy(), mainpage.deiconify()))
+        back_button.bind("<Button-1>", lambda event: (accessories_window.destroy(), shared.mainpage.deiconify()))
+
+        # Display Accessories Listings
+        cursor = shared.cursor
+        cursor.execute("SELECT id, name, image_path FROM listings WHERE category='Accessories'")
+        listings = cursor.fetchall()
+        x_offset = 10
+        y_fixed = 70
+        for listing in listings:
+            img_label = Label(accessories_window, text=listing[1], font=("Lora", 12), bg="black", fg="white")
+            img_label.place(x=x_offset, y=y_fixed, width=100, height=100)
+            img_label.bind("<Button-1>", lambda event, listing_id=listing[0]: (listing_page(listing_id), accessories_window.withdraw()))
+            x_offset += 120
 
     # Creating Accessories Header
     accessories_header = Label(mainpage, text="Accessories", font=("Lora", 18), bg="#5D8736", fg="white")
