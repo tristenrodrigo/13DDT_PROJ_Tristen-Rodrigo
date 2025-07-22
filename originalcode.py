@@ -323,53 +323,53 @@ sign_in_button.bind("<Button-1>", open_sign_in_close_main)
 search_bar = Entry(mainpage, font=("Lora", 12), bg="white", fg="black")
 search_bar.place(x=10, y=70, width=250, height=20)
 
+# Create Search Button
+search_button = Label(mainpage, text="Search", font=("Lora", 12), bg="#809D3C", fg="white")
+search_button.place(x=270, y=70, width=120, height=20)
+
 #Display listings based on category
-def display_category_listings():
+def display_category_listings(search_term=None):
     # Remove old listing labels if any
     for widget in mainpage.winfo_children():
         if getattr(widget, "is_listing_label", False):
             widget.destroy()
 
-    # Clothes
-    cursor.execute("SELECT id, name, image_path FROM listings WHERE category='Clothes'")
-    clothes_listings = cursor.fetchall()
-    x_offset = 120
-    y_fixed = 180
-    for listing in clothes_listings:
-        img_label = Label(mainpage, text=listing[1], font=("Lora", 12), bg="black", fg="white")
-        img_label.place(x=x_offset, y=y_fixed, width=100, height=100)
-        img_label.is_listing_label = True
-        img_label.bind("<Button-1>", lambda event, listing_id=listing[0]: (listing_page(listing_id), mainpage.withdraw()))
-        x_offset += 120  # Move right for next listing
+    categories = [("Clothes", 180), ("Shoes", 360), ("Accessories", 540)]
+    for category, y_fixed in categories:
+        if search_term:
+            cursor.execute(
+                "SELECT id, name, image_path FROM listings WHERE category=? AND name LIKE ?",
+                (category, f"%{search_term}%")
+            )
+        else:
+            cursor.execute(
+                "SELECT id, name, image_path FROM listings WHERE category=?",
+                (category,)
+            )
+        listings = cursor.fetchall()
+        x_offset = 10
+        for listing in listings:
+            img_label = Label(mainpage, text=listing[1], font=("Lora", 12), bg="black", fg="white")
+            img_label.place(x=x_offset, y=y_fixed, width=100, height=100)
+            img_label.is_listing_label = True
+            img_label.bind("<Button-1>", lambda event, listing_id=listing[0]: (listing_page(listing_id), mainpage.withdraw()))
+            x_offset += 120
 
-    # Shoes
-    cursor.execute("SELECT id, name, image_path FROM listings WHERE category='Shoes'")
-    shoes_listings = cursor.fetchall()
-    x_offset = 120
-    y_fixed = 360
-    for listing in shoes_listings:
-        img_label = Label(mainpage, text=listing[1], font=("Lora", 12), bg="black", fg="white")
-        img_label.place(x=x_offset, y=y_fixed, width=100, height=100)
-        img_label.is_listing_label = True
-        img_label.bind("<Button-1>", lambda event, listing_id=listing[0]: (listing_page(listing_id), mainpage.withdraw()))
-        x_offset += 120
+# Update the search button binding:
+def search_and_open_listing(event):
+    search_term = search_bar.get()
+    # Search for listings matching the term in any category
+    cursor.execute(
+        "SELECT id FROM listings WHERE name LIKE ?",
+        (f"%{search_term}%",)
+    )
+    results = cursor.fetchall()
+    if len(results) == 1:
+        listing_page(results[0][0])
+    else:
+        display_category_listings(search_term)
 
-    # Accessories
-    cursor.execute("SELECT id, name, image_path FROM listings WHERE category='Accessories'")
-    accessories_listings = cursor.fetchall()
-    x_offset = 120
-    y_fixed = 540
-    for listing in accessories_listings:
-        img_label = Label(mainpage, text=listing[1], font=("Lora", 12), bg="black", fg="white")
-        img_label.place(x=x_offset, y=y_fixed, width=100, height=100)
-        img_label.is_listing_label = True
-        img_label.bind("<Button-1>", lambda event, listing_id=listing[0]: (listing_page(listing_id), mainpage.withdraw()))
-        x_offset += 120
-
-#Creating Search Button
-search_button = Label(mainpage, text="Search", font=("Lora", 12), bg="#809D3C", fg="white")
-search_button.place(x=270, y=70, width=120, height=20)
-search_button.bind("<Button-1>", lambda event: display_category_listings())
+search_button.bind("<Button-1>", search_and_open_listing)
 
 def new_listing_page():
     new_listing_window = Toplevel(mainpage)
@@ -523,47 +523,32 @@ accessories_header = Label(mainpage, text="Accessories", font=("Lora", 18), bg="
 accessories_header.place(x=10, y=480, width=180, height=40)
 accessories_header.bind("<Button-1>", lambda event: (accessories_page(), mainpage.withdraw()))
 
-def display_category_listings():
+def display_category_listings(search_term=None):
     # Remove old listing labels if any
     for widget in mainpage.winfo_children():
         if getattr(widget, "is_listing_label", False):
             widget.destroy()
 
-    # Clothes
-    cursor.execute("SELECT id, name, image_path FROM listings WHERE category='Clothes'")
-    clothes_listings = cursor.fetchall()
-    x_offset = 200  # Start to the right of the header
-    y_fixed = 180
-    for listing in clothes_listings:
-        img_label = Label(mainpage, text=listing[1], font=("Lora", 12), bg="black", fg="white")
-        img_label.place(x=x_offset, y=y_fixed, width=100, height=100)
-        img_label.is_listing_label = True
-        img_label.bind("<Button-1>", lambda event, listing_id=listing[0]: (listing_page(listing_id), mainpage.withdraw()))
-        x_offset += 120  # Move right for next listing
-
-    # Shoes
-    cursor.execute("SELECT id, name, image_path FROM listings WHERE category='Shoes'")
-    shoes_listings = cursor.fetchall()
-    x_offset = 200
-    y_fixed = 360
-    for listing in shoes_listings:
-        img_label = Label(mainpage, text=listing[1], font=("Lora", 12), bg="black", fg="white")
-        img_label.place(x=x_offset, y=y_fixed, width=100, height=100)
-        img_label.is_listing_label = True
-        img_label.bind("<Button-1>", lambda event, listing_id=listing[0]: (listing_page(listing_id), mainpage.withdraw()))
-        x_offset += 120
-
-    # Accessories
-    cursor.execute("SELECT id, name, image_path FROM listings WHERE category='Accessories'")
-    accessories_listings = cursor.fetchall()
-    x_offset = 200
-    y_fixed = 540
-    for listing in accessories_listings:
-        img_label = Label(mainpage, text=listing[1], font=("Lora", 12), bg="black", fg="white")
-        img_label.place(x=x_offset, y=y_fixed, width=100, height=100)
-        img_label.is_listing_label = True
-        img_label.bind("<Button-1>", lambda event, listing_id=listing[0]: (listing_page(listing_id), mainpage.withdraw()))
-        x_offset += 120
+    categories = [("Clothes", 180), ("Shoes", 360), ("Accessories", 540)]
+    for category, y_fixed in categories:
+        if search_term:
+            cursor.execute(
+                "SELECT id, name, image_path FROM listings WHERE category=? AND name LIKE ?",
+                (category, f"%{search_term}%")
+            )
+        else:
+            cursor.execute(
+                "SELECT id, name, image_path FROM listings WHERE category=?",
+                (category,)
+            )
+        listings = cursor.fetchall()
+        x_offset = 10
+        for listing in listings:
+            img_label = Label(mainpage, text=listing[1], font=("Lora", 12), bg="black", fg="white")
+            img_label.place(x=x_offset, y=y_fixed, width=100, height=100)
+            img_label.is_listing_label = True
+            img_label.bind("<Button-1>", lambda event, listing_id=listing[0]: (listing_page(listing_id), mainpage.withdraw()))
+            x_offset += 120
 
 def listing_page(listing_id=None):
     listing_window = Toplevel(mainpage)
@@ -756,5 +741,8 @@ if os.path.exists("session.txt"):
         else:
             current_user_email = None
 
+
+#Display the main page with category listings
+display_category_listings()
 
 mainpage.mainloop()

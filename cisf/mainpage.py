@@ -16,10 +16,43 @@ def launch_mainpage():
     header_bar = Label(mainpage, bg='#809D3C')
     header_bar.place(x=0, y=60, width=400, height=40)
 
-    #Search Bar
+    # Search Bar
     search_bar = Entry(mainpage, font=("Lora", 12), bg="white", fg="black")
     search_bar.place(x=10, y=70, width=250, height=20)
 
+    # Create Search Button
+    search_button = Label(mainpage, text="Search", font=("Lora", 12), bg="#809D3C", fg="white")
+    search_button.place(x=270, y=70, width=120, height=20)
+
+    # Display listings based on category
+    def display_category_listings(search_term=None):
+        cursor = shared.cursor
+        for widget in mainpage.winfo_children():
+            if getattr(widget, "is_listing_label", False):
+                widget.destroy()
+
+        categories = [("Clothes", 180), ("Shoes", 360), ("Accessories", 540)]
+        for category, y_fixed in categories:
+            if search_term:
+                cursor.execute(
+                    "SELECT id, name, image_path FROM listings WHERE category=? AND name LIKE ?",
+                    (category, f"%{search_term}%")
+                )
+            else:
+                cursor.execute(
+                    "SELECT id, name, image_path FROM listings WHERE category=?",
+                    (category,)
+                )
+            listings = cursor.fetchall()
+            x_offset = 10
+            for listing in listings:
+                img_label = Label(mainpage, text=listing[1], font=("Lora", 12), bg="black", fg="white")
+                img_label.place(x=x_offset, y=y_fixed, width=100, height=100)
+                img_label.is_listing_label = True
+                img_label.bind("<Button-1>", lambda event, listing_id=listing[0]: (listing_page(listing_id), mainpage.withdraw()))
+                x_offset += 120
+
+    # Clothes Page
     def clothes_page():
         clothes_window = Toplevel(mainpage)
         clothes_window.title("Clothes")
@@ -35,11 +68,12 @@ def launch_mainpage():
         back_button.place(x=10, y=650, width=370, height=40)
         back_button.bind("<Button-1>", lambda event: (clothes_window.destroy(), mainpage.deiconify()))
 
-    #Creating Clothes Header
+    # Creating Clothes Header
     clothes_header = Label(mainpage, text="Clothes", font=("Lora", 18), bg="#5D8736", fg="white")
     clothes_header.place(x=10, y=120, width=180, height=40)
     clothes_header.bind("<Button-1>", lambda event: (clothes_page(), mainpage.withdraw()))
 
+    # Shoes Page
     def shoes_page():
         shoes_window = Toplevel(mainpage)
         shoes_window.title("Shoes")
@@ -55,11 +89,12 @@ def launch_mainpage():
         back_button.place(x=10, y=650, width=370, height=40)
         back_button.bind("<Button-1>", lambda event: (shoes_window.destroy(), mainpage.deiconify()))
 
-    #Creating Shoes Header
+    # Creating Shoes Header
     shoes_header = Label(mainpage, text="Shoes", font=("Lora", 18), bg="#5D8736", fg="white")
     shoes_header.place(x=10, y=300, width=180, height=40)
     shoes_header.bind("<Button-1>", lambda event: (shoes_page(), mainpage.withdraw()))
 
+    # Accessories Page
     def accessories_page():
         accessories_window = Toplevel(mainpage)
         accessories_window.title("Accessories")
@@ -75,7 +110,7 @@ def launch_mainpage():
         back_button.place(x=10, y=650, width=370, height=40)
         back_button.bind("<Button-1>", lambda event: (accessories_window.destroy(), mainpage.deiconify()))
 
-    #Creating Accessories Header
+    # Creating Accessories Header
     accessories_header = Label(mainpage, text="Accessories", font=("Lora", 18), bg="#5D8736", fg="white")
     accessories_header.place(x=10, y=480, width=180, height=40)
     accessories_header.bind("<Button-1>", lambda event: (accessories_page(), mainpage.withdraw()))
@@ -118,6 +153,25 @@ def launch_mainpage():
     # Call this function whenever the login state changes
     update_buttons()
     shared.update_mainpage_buttons = update_buttons  # So other modules can call it
+
+    # Show listings when the app opens
+    display_category_listings()
+
+    # Search functionality
+    def search_and_open_listing(event):
+        cursor = shared.cursor
+        search_term = search_bar.get()
+        cursor.execute(
+            "SELECT id FROM listings WHERE name LIKE ?",
+            (f"%{search_term}%",)
+        )
+        results = cursor.fetchall()
+        if len(results) == 1:
+            listing_page(results[0][0])
+        else:
+            display_category_listings(search_term)
+
+    search_button.bind("<Button-1>", search_and_open_listing)
 
     mainpage.mainloop()
 
