@@ -183,7 +183,7 @@ def launch_mainpage():
 
     # Call this function whenever the login state changes
     update_buttons()
-    shared.update_mainpage_buttons = update_buttons  # So other modules can call it
+    shared.update_mainpage_buttons = update_buttons
 
     # Show listings when the app opens
     display_category_listings()

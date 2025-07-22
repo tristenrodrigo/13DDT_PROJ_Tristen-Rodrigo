@@ -21,17 +21,14 @@ def new_listing_page():
     image_path = {"path": None}
 
     def upload_image():
-        file_path = filedialog.askopenfilename(
-            title='Select an Image',
-            filetypes=[("Image Files", "*.png;*.jpg;*.jpeg;*")]
-        )
+        file_path = filedialog.askopenfilename(title='Select an Image',filetypes=[("Image Files", "*.png;*.jpg;*.jpeg;*")])
         if file_path:
             try:
                 img = Image.open(file_path)
-                img = img.resize((180, 180))  # Resize to fit the label
+                img = img.resize((180, 180))
                 photo = ImageTk.PhotoImage(img)
                 uploaded_image_label.config(image=photo)
-                uploaded_image_label.image = photo  # Keep reference!
+                uploaded_image_label.image = photo
                 image_path["path"] = file_path
             except Exception as e:
                 messagebox.showerror("Error", f"Could not open image file.\n{e}")
@@ -55,7 +52,7 @@ def new_listing_page():
     category_label.place(x=10, y=360, width=100, height=30)
     category_options = ["Clothes", "Shoes", "Accessories"]
     category_var = StringVar(new_listing_window)
-    category_var.set("Select Category") # Default value
+    category_var.set("Select Category")
     category_dropdown = OptionMenu(new_listing_window, category_var, *category_options)
     category_dropdown.config(bg='white', fg="black")
     category_dropdown.place(x=120, y=360, width=120, height=30)
