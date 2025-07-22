@@ -10,6 +10,7 @@ def new_listing_page():
     new_listing_window = Toplevel(mainpage)
     new_listing_window.title("New Listing")
     new_listing_window.geometry("400x700")
+    
     new_listing_window.config(bg="white")
 
     header = Label(new_listing_window, text="New Listing", font=("Lora", 24), bg="#4F6F52", fg="white")
@@ -27,13 +28,13 @@ def new_listing_page():
         if file_path:
             try:
                 img = Image.open(file_path)
-                img = img.resize((100, 100))
+                img = img.resize((180, 180))  # Resize to fit the label
                 photo = ImageTk.PhotoImage(img)
                 uploaded_image_label.config(image=photo)
-                uploaded_image_label.image = photo
+                uploaded_image_label.image = photo  # Keep reference!
                 image_path["path"] = file_path
-            except Exception:
-                messagebox.showerror("Error", "Could not open image file.")
+            except Exception as e:
+                messagebox.showerror("Error", f"Could not open image file.\n{e}")
 
     image_upload_button = Label(new_listing_window, text="Upload Image", font=("Lora", 12), bg="#809D3C", fg="black")
     image_upload_button.place(x=110, y=70, width=180, height=30)
