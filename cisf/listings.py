@@ -10,6 +10,7 @@ def new_listing_page():
     new_listing_window = Toplevel(mainpage)
     new_listing_window.title("New Listing")
     new_listing_window.geometry("400x700")
+    new_listing_window.resizable(False, False)
     
     new_listing_window.config(bg="white")
 
@@ -90,6 +91,7 @@ def listing_page(listing_id=None):
     listing_window = Toplevel(mainpage)
     listing_window.title("Listing Page")
     listing_window.geometry("400x700")
+    listing_window.resizable(False, False)
     listing_window.config(bg="white")
 
     if listing_id:

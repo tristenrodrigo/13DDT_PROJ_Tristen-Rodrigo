@@ -9,6 +9,7 @@ def manage_account_page():
     manage_account_window = Toplevel(mainpage)
     manage_account_window.title("Manage Account")
     manage_account_window.geometry("400x700")
+    manage_account_window.resizable(False, False)
     manage_account_window.config(bg="white")
 
     header = Label(manage_account_window, text="Manage Account", font=("Lora", 24), bg="#4F6F52", fg="white")

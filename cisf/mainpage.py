@@ -7,6 +7,7 @@ def launch_mainpage():
     mainpage = shared.mainpage
     mainpage.title("Loopwear")
     mainpage.geometry("400x700")
+    mainpage.resizable(False, False)
     mainpage.config(bg="white")
 
     mainpage.grid_columnconfigure(0, weight=1)

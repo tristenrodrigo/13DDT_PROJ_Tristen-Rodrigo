@@ -9,6 +9,7 @@ def sign_in_page():
     sign_in_window = Toplevel(mainpage)
     sign_in_window.title("Sign In")
     sign_in_window.geometry("400x700")
+    sign_in_window.resizable(False, False)
     sign_in_window.config(bg="white")
 
     header = Label(sign_in_window, text="Sign In", font=("Lora", 24), bg="#4F6F52", fg="white")
@@ -59,6 +60,7 @@ def sign_up_page():
     sign_up_window = Toplevel(mainpage)
     sign_up_window.title("Sign Up")
     sign_up_window.geometry("400x700")
+    sign_up_window.resizable(False, False)
     sign_up_window.config(bg="white")
 
     header = Label(sign_up_window, text="Sign Up", font=("Lora", 24), bg="#4F6F52", fg="white")
