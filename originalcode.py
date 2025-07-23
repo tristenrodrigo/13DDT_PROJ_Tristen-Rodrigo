@@ -7,7 +7,7 @@ import os
 current_user_email = None
 
 # Create/connect to the database
-conn = sqlite3.connect('Main.db')
+conn = sqlite3.connect('lu.db')
 cursor = conn.cursor()
 
 # Create the listings table

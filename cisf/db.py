@@ -2,7 +2,7 @@ import sqlite3
 import cisf.shared as shared
 
 def setup_db():
-    shared.conn = sqlite3.connect('Main.db')
+    shared.conn = sqlite3.connect('lu.db')
     shared.cursor = shared.conn.cursor()
     cursor = shared.cursor
     conn = shared.conn
