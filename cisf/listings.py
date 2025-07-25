@@ -49,12 +49,45 @@ def new_listing_page():
     item_description_entry = Entry(new_listing_window, font=("Lora", 12), bg='white', fg="black")
     item_description_entry.place(x=200, y=300, width=180, height=50)
 
-    category_label = Label(new_listing_window, text="Item Category:*", font=("Lora", 12), bg="white", fg="black")
-    category_label.place(x=10, y=360, width=100, height=30)
+    # Category dropdown and extra options
     category_options = ["Clothes", "Shoes", "Accessories"]
     category_var = StringVar(new_listing_window)
     category_var.set("Select Category")
-    category_dropdown = OptionMenu(new_listing_window, category_var, *category_options)
+
+    # Extra option widgets (hidden by default)
+    clothes_size_label = Label(new_listing_window, text="Clothing Size:", font=("Lora", 12), bg="white", fg="black")
+    clothes_size_entry = Entry(new_listing_window, font=("Lora", 12), bg='white', fg="black")
+
+    shoes_size_label = Label(new_listing_window, text="Shoe Size:", font=("Lora", 12), bg="white", fg="black")
+    shoes_size_entry = Entry(new_listing_window, font=("Lora", 12), bg='white', fg="black")
+
+    accessory_type_label = Label(new_listing_window, text="Accessory Type:", font=("Lora", 12), bg="white", fg="black")
+    accessory_type_entry = Entry(new_listing_window, font=("Lora", 12), bg='white', fg="black")
+
+    def show_extra_options(selected_category=None):
+        # Hide all extra option widgets first
+        clothes_size_label.place_forget()
+        clothes_size_entry.place_forget()
+        shoes_size_label.place_forget()
+        shoes_size_entry.place_forget()
+        accessory_type_label.place_forget()
+        accessory_type_entry.place_forget()
+
+        category = selected_category if selected_category else category_var.get()
+
+        if category == "Clothes":
+            clothes_size_label.place(x=10, y=400, width=120, height=30)
+            clothes_size_entry.place(x=140, y=400, width=120, height=30)
+        elif category == "Shoes":
+            shoes_size_label.place(x=10, y=400, width=120, height=30)
+            shoes_size_entry.place(x=140, y=400, width=120, height=30)
+        elif category == "Accessories":
+            accessory_type_label.place(x=10, y=400, width=120, height=30)
+            accessory_type_entry.place(x=140, y=400, width=120, height=30)
+
+    category_dropdown = OptionMenu(
+        new_listing_window, category_var, *category_options, command=show_extra_options
+    )
     category_dropdown.config(bg='white', fg="black")
     category_dropdown.place(x=120, y=360, width=120, height=30)
 

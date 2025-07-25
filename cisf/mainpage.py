@@ -177,7 +177,7 @@ def launch_mainpage():
     def update_buttons():
         if shared.current_user_email:
             sign_in_button.place_forget()
-            manage_account_button.place(x=270, y=650, width=180, height=40)
+            manage_account_button.place(x=270, y=650, width=120, height=40)
         else:
             manage_account_button.place_forget()
             sign_in_button.place(x=270, y=650, width=120, height=40)
