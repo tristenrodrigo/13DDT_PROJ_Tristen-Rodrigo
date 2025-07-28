@@ -1,5 +1,11 @@
 from tkinter import Toplevel, Label, Entry, messagebox, StringVar, OptionMenu
 import cisf.shared as shared
+import os
+
+# Check if session file exists and load current user email
+if os.path.exists("session.txt"):
+    with open("session.txt", "r") as f:
+        shared.current_user_email = f.read().strip()
 
 def sign_in_page():
     mainpage = shared.mainpage
@@ -32,6 +38,9 @@ def sign_in_page():
         user = cursor.fetchone()
         if user:
             shared.current_user_email = email
+            # Save session to file
+            with open("session.txt", "w") as f:
+                f.write(email)
             messagebox.showinfo("Success", f"Welcome back, {user[1]}!")
             sign_in_window.destroy()
             shared.mainpage.deiconify()

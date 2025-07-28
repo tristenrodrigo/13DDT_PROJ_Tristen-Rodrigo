@@ -39,22 +39,22 @@ def new_listing_page():
     image_upload_button.bind("<Button-1>", lambda event: upload_image())
 
     item_name_label = Label(new_listing_window, text="Item Name:", font=("Lora", 12), bg="white", fg="black")
-    item_name_label.place(x=10, y=260, width=70, height=30)
+    item_name_label.place(x=10, y=110, width=70, height=30)
     item_name_entry = Entry(new_listing_window, font=("Lora", 12), bg='white', fg="black")
-    item_name_entry.place(x=200, y=260, width=180, height=30)
+    item_name_entry.place(x=200, y=110, width=180, height=30)
 
     item_description_label = Label(new_listing_window, text="Item Description:", font=("Lora", 12), bg="white", fg="black")
-    item_description_label.place(x=10, y=300, width=100, height=30)
+    item_description_label.place(x=10, y=160, width=100, height=30)
 
     item_description_entry = Entry(new_listing_window, font=("Lora", 12), bg='white', fg="black")
-    item_description_entry.place(x=200, y=300, width=180, height=50)
+    item_description_entry.place(x=200, y=160, width=180, height=50)
 
     # Category dropdown and extra options
     category_options = ["Clothes", "Shoes", "Accessories"]
     category_var = StringVar(new_listing_window)
     category_var.set("Select Category")
 
-    # Extra option widgets (hidden by default)
+    # Extra option widgets
     clothes_size_label = Label(new_listing_window, text="Clothing Size:", font=("Lora", 12), bg="white", fg="black")
     clothes_size_entry = Entry(new_listing_window, font=("Lora", 12), bg='white', fg="black")
 
@@ -65,7 +65,6 @@ def new_listing_page():
     accessory_type_entry = Entry(new_listing_window, font=("Lora", 12), bg='white', fg="black")
 
     def show_extra_options(selected_category=None):
-        # Hide all extra option widgets first
         clothes_size_label.place_forget()
         clothes_size_entry.place_forget()
         shoes_size_label.place_forget()
