@@ -163,3 +163,23 @@ class ListingsPage:
         back_button = Label(listing_window, text="Back to Main Page", font=("Lora", 12), bg="#809D3C", fg="white")
         back_button.place(x=10, y=650, width=370, height=40)
         back_button.bind("<Button-1>", lambda event: (listing_window.destroy(), mainpage.deiconify()))
+
+        img_label = Label(listing_window, bg="white")
+        img_label.place(x=200, y=70, width=180, height=180)
+        if listing and listing[2]:
+            try:
+                img = Image.open(listing[2])
+                img = img.resize((180, 180))
+                photo = ImageTk.PhotoImage(img)
+                img_label.config(image=photo)
+                img_label.image = photo
+            except Exception:
+                img_label.config(text="Image not found", fg="red")
+
+        img_label.bind(
+            "<Button-1>",
+            lambda event, listing_id=listing[0]: (
+                ListingsPage(self.shared).listing_page(listing_id),
+                mainpage.withdraw()
+            )
+        )
