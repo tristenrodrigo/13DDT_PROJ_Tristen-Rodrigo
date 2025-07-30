@@ -1,9 +1,13 @@
-import cisf.db as db
-import cisf.mainpage as mainpage
+from cisf.db import Database
+from cisf.shared import SharedState
+from cisf.mainpage import MainPage
 
 def main():
-    db.setup_db()
-    mainpage.launch_mainpage()
+    shared = SharedState()
+    shared.db = Database()
+    shared.conn = shared.db.conn
+    shared.cursor = shared.db.cursor
+    MainPage(shared)
 
 if __name__ == "__main__":
     main()
