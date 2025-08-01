@@ -12,9 +12,9 @@ class SignInPage:
         self.shared = shared
 
     def sign_in_page(self):
-        mainpage = self.mainpage
-        cursor = self.cursor
-        conn = self.conn
+        mainpage = self.shared.mainpage
+        cursor = self.shared.cursor
+        conn = self.shared.conn
 
         sign_in_window = Toplevel(mainpage)
         sign_in_window.title("Sign In")
@@ -41,14 +41,14 @@ class SignInPage:
             cursor.execute("SELECT * FROM users WHERE email=? AND password=?", (email, password))
             user = cursor.fetchone()
             if user:
-                shared.current_user_email = email
+                self.shared.current_user_email = email
                 # Save session to file
                 with open("session.txt", "w") as f:
                     f.write(email)
                 messagebox.showinfo("Success", f"Welcome back, {user[1]}!")
                 sign_in_window.destroy()
-                shared.mainpage.deiconify()
-                shared.update_mainpage_buttons()
+                self.shared.mainpage.deiconify()
+                self.shared.update_mainpage_buttons()
             else:
                 messagebox.showerror("Error", "Invalid email or password. Please try again.")
 

@@ -52,6 +52,10 @@ class ListingsPage:
         item_description_entry = Entry(new_listing_window, font=("Lora", 12), bg='white', fg="black")
         item_description_entry.place(x=200, y=160, width=180, height=50)
 
+        category_dropdown_label = Label(new_listing_window, text="Category:", font=("Lora", 12), bg="white", fg="black")
+        category_dropdown_label.place(x=10, y=360, width=100, height= 30)
+        category_dropdown_label.config(bg="white", fg="black")
+        
         # Category dropdown and extra options
         category_options = ["Clothes", "Shoes", "Accessories"]
         category_var = StringVar(new_listing_window)
