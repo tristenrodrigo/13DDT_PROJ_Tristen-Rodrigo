@@ -12,9 +12,9 @@ class SignInPage:
         self.shared = shared
 
     def sign_in_page(self):
-        mainpage = shared.mainpage
-        cursor = shared.cursor
-        conn = shared.conn
+        mainpage = self.mainpage
+        cursor = self.cursor
+        conn = self.conn
 
         sign_in_window = Toplevel(mainpage)
         sign_in_window.title("Sign In")
@@ -66,9 +66,9 @@ class SignInPage:
         back_button.bind("<Button-1>", lambda e: (sign_in_window.destroy(), mainpage.deiconify()))
 
     def sign_up_page(self):
-        mainpage = shared.mainpage
-        cursor = shared.cursor
-        conn = shared.conn
+        mainpage = self.shared.mainpage
+        cursor = self.shared.cursor
+        conn = self.shared.conn
 
         sign_up_window = Toplevel(mainpage)
         sign_up_window.title("Sign Up")
