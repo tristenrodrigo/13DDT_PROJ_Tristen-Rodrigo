@@ -2,6 +2,7 @@ from tkinter import Tk, Label, Entry, Toplevel
 from cisf.listings import ListingsPage
 from cisf.signin import SignInPage
 from cisf.manage import ManageAccountPage
+from PIL import Image, ImageTk
 
 class MainPage:
     def __init__(self, shared):
@@ -40,6 +41,8 @@ class MainPage:
                     widget.destroy()
 
             categories = [("Clothes", 180), ("Shoes", 360), ("Accessories", 540)]
+            self.image_refs = []  # Store image references to prevent garbage collection
+
             for category, y_fixed in categories:
                 if search_term:
                     cursor.execute(
@@ -54,17 +57,38 @@ class MainPage:
                 listings = cursor.fetchall()
                 x_offset = 10
                 for listing in listings:
-                    img_label = Label(mainpage, text=listing[1], font=("Lora", 12), bg="black", fg="white")
-                    img_label.place(x=x_offset, y=y_fixed, width=100, height=100)
+                    # Display image if available
+                    img_label = Label(mainpage, bg="white")
                     img_label.is_listing_label = True
-                    img_label.bind(
-                        "<Button-1>",
-                        lambda event, listing_id=listing[0]: (
-                            ListingsPage(self.shared).listing_page(listing_id),
-                            mainpage.withdraw()
-                        )
-                    )
-                    x_offset += 120
+                    photo = None
+                    if listing[2]:
+                        try:
+                            img = Image.open(listing[2])
+                            img = img.resize((60, 60))
+                            photo = ImageTk.PhotoImage(img)
+                            img_label.config(image=photo)
+                            img_label.image = photo
+                            self.image_refs.append(photo)
+                        except Exception:
+                            img_label.config(text="No image", fg="red")
+                    else:
+                        img_label.config(text="No image", fg="gray")
+                    img_label.place(x=x_offset, y=y_fixed, width=60, height=60)
+
+                    # Display name below image
+                    name_label = Label(mainpage, text=listing[1], font=("Lora", 10), bg="white", fg="black")
+                    name_label.is_listing_label = True
+                    name_label.place(x=x_offset, y=y_fixed+65, width=60, height=20)
+
+                    # Bind click to open listing (fix late binding with default argument)
+                    def open_listing(event, listing_id=listing[0]):
+                        ListingsPage(self.shared).listing_page(listing_id)
+                        mainpage.withdraw()
+
+                    img_label.bind("<Button-1>", open_listing)
+                    name_label.bind("<Button-1>", open_listing)
+
+                    x_offset += 70
 
         # Clothes Page
         def clothes_page():

@@ -156,8 +156,8 @@ class SignInPage:
                 cursor.execute(
                     'INSERT INTO users (first_name, last_name, email, password, gender, clothing_size, shoe_size) VALUES (?, ?, ?, ?, ?, ?, ?)',
                     (
-                        first_name_entry.get(),  # first name
-                        last_name_entry.get(),  # last name
+                        first_name_entry.get(),
+                        last_name_entry.get(),
                         email_entry.get(),
                         password_entry.get(),
                         gender_var.get(),
