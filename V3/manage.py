@@ -24,15 +24,56 @@ class ManageAccountPage:
             cursor.execute("SELECT first_name, last_name, email, gender, clothing_size, shoe_size FROM users WHERE email=?", (current_user_email,))
             user_info = cursor.fetchone()
 
-        user_info_label = Label(manage_account_window, text="User Information", font=("Lora", 18), bg="white", fg="black")
-        user_info_label.place(x=10, y=260, width=180, height=30)
+        # User Info Section
+        user_info_label = Label(
+            manage_account_window,
+            text="User Information",
+            font=("Lora", 18, "bold"),
+            bg="white",
+            fg="#4F6F52"
+        )
+        user_info_label.place(x=10, y=120, width=380, height=40)
+
         if user_info:
-            info_text = f"Name: {user_info[0]} {user_info[1]}\nEmail: {user_info[2]}\nGender: {user_info[3]}\nClothing Size: {user_info[4]}\nShoe Size: {user_info[5]}"
+            # Nicely formatted info with bold labels
+            info_labels = ["Name:", "Email:", "Gender:", "Clothing Size:", "Shoe Size:"]
+            info_values = [
+                f"{user_info[0]} {user_info[1]}",
+                user_info[2],
+                user_info[3],
+                user_info[4],
+                user_info[5]
+            ]
+            y_start = 170
+            for i, (label_text, value_text) in enumerate(zip(info_labels, info_values)):
+                label = Label(
+                    manage_account_window,
+                    text=label_text,
+                    font=("Lora", 12, "bold"),
+                    bg="white",
+                    fg="#333"
+                )
+                label.place(x=30, y=y_start + i*40, width=120, height=30)
+                value = Label(
+                    manage_account_window,
+                    text=value_text,
+                    font=("Lora", 12),
+                    bg="white",
+                    fg="#222"
+                )
+                value.place(x=160, y=y_start + i*40, width=220, height=30)
         else:
             info_text = "No user info found."
-
-        user_info_text = Label(manage_account_window, text=info_text, font=("Lora", 12), bg="white", fg="black", justify="left", anchor="nw")
-        user_info_text.place(x=10, y=300, width=380, height=100)
+            user_info_text = Label(
+                manage_account_window,
+                text=info_text,
+                font=("Lora", 12),
+                bg="white",
+                fg="red",
+                justify="left",
+                anchor="nw"
+            )
+            user_info_text.place(x=10, y=170, width=380, height=30)
 
         back_button = Label(manage_account_window, text="Back to Main Page", font=("Lora", 12), bg="#809D3C", fg="white")
         back_button.place(x=205, y=600, width=185, height=40)

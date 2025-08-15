@@ -40,8 +40,9 @@ class MainPage:
                 if getattr(widget, "is_listing_label", False):
                     widget.destroy()
 
-            categories = [("Clothes", 180), ("Shoes", 360), ("Accessories", 540)]
-            self.image_refs = []  # Store image references to prevent garbage collection
+            # Start listings below header and header bar
+            categories = [("Clothes", 170), ("Shoes", 350), ("Accessories", 530)]
+            self.image_refs = []
 
             for category, y_fixed in categories:
                 if search_term:
@@ -64,23 +65,23 @@ class MainPage:
                     if listing[2]:
                         try:
                             img = Image.open(listing[2])
-                            img = img.resize((60, 60))
+                            img = img.resize((80, 80))
                             photo = ImageTk.PhotoImage(img)
                             img_label.config(image=photo)
                             img_label.image = photo
                             self.image_refs.append(photo)
                         except Exception:
-                            img_label.config(text="No image", fg="red")
+                            img_label.config(text="No image", fg="red", font=("Lora", 10))
                     else:
-                        img_label.config(text="No image", fg="gray")
-                    img_label.place(x=x_offset, y=y_fixed, width=60, height=60)
+                        img_label.config(text="No image", fg="gray", font=("Lora", 10))
+                    img_label.place(x=x_offset, y=y_fixed, width=80, height=80)
 
                     # Display name below image
                     name_label = Label(mainpage, text=listing[1], font=("Lora", 10), bg="white", fg="black")
                     name_label.is_listing_label = True
-                    name_label.place(x=x_offset, y=y_fixed+65, width=60, height=20)
+                    name_label.place(x=x_offset, y=y_fixed+82, width=80, height=18)
 
-                    # Bind click to open listing (fix late binding with default argument)
+                    # Bind click to open listing
                     def open_listing(event, listing_id=listing[0]):
                         ListingsPage(self.shared).listing_page(listing_id)
                         mainpage.withdraw()
@@ -88,7 +89,7 @@ class MainPage:
                     img_label.bind("<Button-1>", open_listing)
                     name_label.bind("<Button-1>", open_listing)
 
-                    x_offset += 70
+                    x_offset += 90  # spacing between items
 
         # Clothes Page
         def clothes_page():

@@ -14,22 +14,22 @@ class ListingsPage:
         new_listing_window.title("New Listing")
         new_listing_window.geometry("400x700")
         new_listing_window.resizable(False, False)
-        
         new_listing_window.config(bg="white")
 
         header = Label(new_listing_window, text="New Listing", font=("Lora", 24), bg="#4F6F52", fg="white")
         header.place(x=0, y=0, width=400, height=50)
 
-        uploaded_image_label = Label(new_listing_window, bg="white")
-        uploaded_image_label.place(x=10, y=70, width=180, height=180)
+        # Image upload
+        uploaded_image_label = Label(new_listing_window, bg="white", relief="groove")
+        uploaded_image_label.place(x=20, y=70, width=120, height=120)
         image_path = {"path": None}
 
         def upload_image():
-            file_path = filedialog.askopenfilename(title='Select an Image',filetypes=[("Image Files", "*.png;*.jpg;*.jpeg;*")])
+            file_path = filedialog.askopenfilename(title='Select an Image', filetypes=[("Image Files", "*.png;*.jpg;*.jpeg;*")])
             if file_path:
                 try:
                     img = Image.open(file_path)
-                    img = img.resize((180, 180))
+                    img = img.resize((120, 120))
                     photo = ImageTk.PhotoImage(img)
                     uploaded_image_label.config(image=photo)
                     uploaded_image_label.image = photo
@@ -37,74 +37,89 @@ class ListingsPage:
                 except Exception as e:
                     messagebox.showerror("Error", f"Could not open image file.\n{e}")
 
-        image_upload_button = Label(new_listing_window, text="Upload Image", font=("Lora", 12), bg="#809D3C", fg="black")
-        image_upload_button.place(x=110, y=70, width=180, height=30)
+        image_upload_button = Label(new_listing_window, text="Upload Image", font=("Lora", 12), bg="#809D3C", fg="white", cursor="hand2")
+        image_upload_button.place(x=160, y=110, width=200, height=40)
         image_upload_button.bind("<Button-1>", lambda event: upload_image())
 
+        # Item Name
         item_name_label = Label(new_listing_window, text="Item Name:", font=("Lora", 12), bg="white", fg="black")
-        item_name_label.place(x=10, y=110, width=70, height=30)
+        item_name_label.place(x=10, y=210, width=120, height=30)
         item_name_entry = Entry(new_listing_window, font=("Lora", 12), bg='white', fg="black")
-        item_name_entry.place(x=200, y=110, width=180, height=30)
+        item_name_entry.place(x=140, y=210, width=220, height=30)
 
-        item_description_label = Label(new_listing_window, text="Item Description:", font=("Lora", 12), bg="white", fg="black")
-        item_description_label.place(x=10, y=160, width=100, height=30)
-
+        # Item Description
+        item_description_label = Label(new_listing_window, text="Description:", font=("Lora", 12), bg="white", fg="black")
+        item_description_label.place(x=10, y=250, width=120, height=30)
         item_description_entry = Entry(new_listing_window, font=("Lora", 12), bg='white', fg="black")
-        item_description_entry.place(x=200, y=160, width=180, height=50)
+        item_description_entry.place(x=140, y=250, width=220, height=30)
 
-        category_dropdown_label = Label(new_listing_window, text="Category:", font=("Lora", 12), bg="white", fg="black")
-        category_dropdown_label.place(x=10, y=360, width=100, height= 30)
-        category_dropdown_label.config(bg="white", fg="black")
-        
-        # Category dropdown and extra options
+        # Category dropdown
+        category_label = Label(new_listing_window, text="Category:", font=("Lora", 12), bg="white", fg="black")
+        category_label.place(x=10, y=300, width=120, height=30)
         category_options = ["Clothes", "Shoes", "Accessories"]
         category_var = StringVar(new_listing_window)
-        category_var.set("Select Category")
+        category_var.set(category_options[0])
+        category_dropdown = OptionMenu(new_listing_window, category_var, *category_options)
+        category_dropdown.config(bg='white', fg="black")
+        category_dropdown.place(x=140, y=300, width=220, height=30)
 
-        # Extra option widgets
+        # Extra fields for each category (dropdowns)
         clothes_size_label = Label(new_listing_window, text="Clothing Size:", font=("Lora", 12), bg="white", fg="black")
-        clothes_size_entry = Entry(new_listing_window, font=("Lora", 12), bg='white', fg="black")
+        clothes_size_options = ["XS", "S", "M", "L", "XL", "XXL"]
+        clothes_size_var = StringVar(new_listing_window)
+        clothes_size_var.set(clothes_size_options[0])
+        clothes_size_dropdown = OptionMenu(new_listing_window, clothes_size_var, *clothes_size_options)
 
         shoes_size_label = Label(new_listing_window, text="Shoe Size:", font=("Lora", 12), bg="white", fg="black")
-        shoes_size_entry = Entry(new_listing_window, font=("Lora", 12), bg='white', fg="black")
+        shoes_size_options = [str(size) for size in range(5, 14)]
+        shoes_size_var = StringVar(new_listing_window)
+        shoes_size_var.set(shoes_size_options[0])
+        shoes_size_dropdown = OptionMenu(new_listing_window, shoes_size_var, *shoes_size_options)
 
         accessory_type_label = Label(new_listing_window, text="Accessory Type:", font=("Lora", 12), bg="white", fg="black")
         accessory_type_entry = Entry(new_listing_window, font=("Lora", 12), bg='white', fg="black")
 
-        def show_extra_options(selected_category=None):
+        def show_extra_options(*args):
+            # Hide all extra option widgets first
             clothes_size_label.place_forget()
-            clothes_size_entry.place_forget()
+            clothes_size_dropdown.place_forget()
             shoes_size_label.place_forget()
-            shoes_size_entry.place_forget()
+            shoes_size_dropdown.place_forget()
             accessory_type_label.place_forget()
             accessory_type_entry.place_forget()
 
-            category = selected_category if selected_category else category_var.get()
-
+            category = category_var.get()
             if category == "Clothes":
-                clothes_size_label.place(x=10, y=400, width=120, height=30)
-                clothes_size_entry.place(x=140, y=400, width=120, height=30)
+                clothes_size_label.place(x=10, y=350, width=120, height=30)
+                clothes_size_dropdown.place(x=140, y=350, width=220, height=30)
+                clothes_size_dropdown.config(bg='white', fg="black")
             elif category == "Shoes":
-                shoes_size_label.place(x=10, y=400, width=120, height=30)
-                shoes_size_entry.place(x=140, y=400, width=120, height=30)
+                shoes_size_label.place(x=10, y=350, width=120, height=30)
+                shoes_size_dropdown.place(x=140, y=350, width=220, height=30)
+                shoes_size_dropdown.config(bg='white', fg="black")
             elif category == "Accessories":
-                accessory_type_label.place(x=10, y=400, width=120, height=30)
-                accessory_type_entry.place(x=140, y=400, width=120, height=30)
+                accessory_type_label.place(x=10, y=350, width=120, height=30)
+                accessory_type_entry.place(x=140, y=350, width=220, height=30)
 
-        category_dropdown = OptionMenu(
-            new_listing_window, category_var, *category_options, command=show_extra_options
-        )
-        category_dropdown.config(bg='white', fg="black")
-        category_dropdown.place(x=120, y=360, width=120, height=30)
+        # Use trace to call show_extra_options when category changes
+        category_var.trace_add("write", show_extra_options)
+        show_extra_options()  # Show default on startup
 
         def save_listing():
             name = item_name_entry.get()
             description = item_description_entry.get()
             img_path = image_path["path"]
             category = category_var.get()
+            extra1 = None
             if not name:
                 messagebox.showwarning("Missing Name", "Please enter an item name.")
                 return
+            if category == "Clothes":
+                extra1 = clothes_size_var.get()
+            elif category == "Shoes":
+                extra1 = shoes_size_var.get()
+            elif category == "Accessories":
+                extra1 = accessory_type_entry.get()
             cursor.execute(
                 'INSERT INTO listings (name, description, image_path, category) VALUES (?, ?, ?, ?)',
                 (name, description, img_path, category)
@@ -114,11 +129,11 @@ class ListingsPage:
             new_listing_window.destroy()
             mainpage.deiconify()
 
-        publish_listing_button = Label(new_listing_window, text="Publish Listing", font=("Lora", 12), bg="#809D3C", fg="white")
-        publish_listing_button.place(x=10, y=400, width=370, height=40)
+        publish_listing_button = Label(new_listing_window, text="Publish Listing", font=("Lora", 12), bg="#809D3C", fg="white", cursor="hand2")
+        publish_listing_button.place(x=10, y=600, width=370, height=40)
         publish_listing_button.bind("<Button-1>", lambda event: save_listing())
 
-        back_button = Label(new_listing_window, text="Back to Main Page", font=("Lora", 12), bg="#809D3C", fg="white")
+        back_button = Label(new_listing_window, text="Back to Main Page", font=("Lora", 12), bg="#809D3C", fg="white", cursor="hand2")
         back_button.place(x=10, y=650, width=370, height=40)
         back_button.bind("<Button-1>", lambda event: (new_listing_window.destroy(), mainpage.deiconify()))
 
