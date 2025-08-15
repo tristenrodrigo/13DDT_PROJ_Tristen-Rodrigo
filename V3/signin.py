@@ -1,11 +1,7 @@
 from tkinter import Toplevel, Label, Entry, messagebox, StringVar, OptionMenu
-import cisf.shared as shared
 import os
-
-# Check if session file exists and load current user email
-if os.path.exists("session.txt"):
-    with open("session.txt", "r") as f:
-        shared.current_user_email = f.read().strip()
+import uuid
+import time
 
 class SignInPage:
     def __init__(self, shared):
@@ -42,9 +38,12 @@ class SignInPage:
             user = cursor.fetchone()
             if user:
                 self.shared.current_user_email = email
-                # Save session to file
+                # Generate session code and expiry (2 days)
+                session_code = str(uuid.uuid4())
+                expiry = int(time.time()) + 2 * 24 * 60 * 60
                 with open("session.txt", "w") as f:
-                    f.write(email)
+                    f.write(f"{email}|{session_code}|{expiry}")
+                self.shared.session_code = session_code
                 messagebox.showinfo("Success", f"Welcome back, {user[1]}!")
                 sign_in_window.destroy()
                 self.shared.mainpage.deiconify()
@@ -60,7 +59,6 @@ class SignInPage:
         sign_up_label.place(x=20, y=200, width=175, height=30)
         sign_up_label.bind("<Button-1>", lambda e: (sign_in_window.destroy(), self.sign_up_page()))
 
-        # Back Button
         back_button = Label(sign_in_window, text="Back", bg="#809D3C", fg="white", font=("Lora", 12))
         back_button.place(x=205, y=200, width=175, height=30)
         back_button.bind("<Button-1>", lambda e: (sign_in_window.destroy(), mainpage.deiconify()))
@@ -115,14 +113,13 @@ class SignInPage:
             self.sign_in_page()
         back_button.bind("<Button-1>", go_back)
 
-        def male_second_signup_window():
+        def second_signup_window():
             second_window = Toplevel(sign_up_window)
             second_window.title("Sign Up")
             second_window.geometry("400x700")
             second_window.config(bg="white")
 
-            header = Label(second_window, text="Sign Up: Page 2", font=("Lora", 24))
-            header.config(bg="#4F6F52", fg="white")
+            header = Label(second_window, text="Sign Up: Page 2", font=("Lora", 24), bg="#4F6F52", fg="white")
             header.place(x=10, y=10, width=380, height=50)
 
             # Clothing Size
@@ -130,10 +127,7 @@ class SignInPage:
             size_label.place(x=10, y=70, width=180, height=30)
             size_options = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"]
             size_var = StringVar(second_window)
-            if size_options:
-                size_var.set(size_options[0])
-            else:
-                size_var.set("Default")
+            size_var.set(size_options[0])
             size_dropdown = OptionMenu(second_window, size_var, *size_options)
             size_dropdown.config(bg='white', fg="black")
             size_dropdown.place(x=200, y=70, width=180, height=30)
@@ -141,12 +135,9 @@ class SignInPage:
             # Shoe Size
             shoe_size_label = Label(second_window, text="Shoe Size:", font=("Lora", 12), bg="white", fg="black")
             shoe_size_label.place(x=10, y=110, width=180, height=30)
-            shoe_size_options = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
+            shoe_size_options = [str(i) for i in range(1, 16)]
             shoe_size_var = StringVar(second_window)
-            if shoe_size_options:
-                shoe_size_var.set(shoe_size_options[0])
-            else:
-                shoe_size_var.set("Default")
+            shoe_size_var.set(shoe_size_options[0])
             shoe_size_dropdown = OptionMenu(second_window, shoe_size_var, *shoe_size_options)
             shoe_size_dropdown.config(bg='white', fg="black")
             shoe_size_dropdown.place(x=200, y=110, width=180, height=30)
@@ -166,101 +157,44 @@ class SignInPage:
                     )
                 )
                 conn.commit()
+                # Generate session code and expiry (2 days)
+                session_code = str(uuid.uuid4())
+                expiry = int(time.time()) + 2 * 24 * 60 * 60
+                with open("session.txt", "w") as f:
+                    f.write(f"{email_entry.get()}|{session_code}|{expiry}")
+                self.shared.current_user_email = email_entry.get()
+                self.shared.session_code = session_code
                 messagebox.showinfo("Success", "Sign up successful!")
                 second_window.destroy()
                 sign_up_window.destroy()
                 mainpage.deiconify()
 
-            sign_up_button = Label(second_window, text="Sign Up", font=("Lora", 12), bg="#809D3C", fg="White")
-            sign_up_button.place(x=10, y=160, width=370, height=40)
-            sign_up_button.bind("<Button-1>", lambda event: save_user())
-
-        def female_second_signup_window():
-            # Creating the second window
-            second_window = Toplevel(sign_up_window)
-            second_window.title("Sign Up")
-            second_window.geometry("400x700")
-            second_window.config(bg="white")
-
-            # Creating Header for the second window
-            header = Label(second_window, text="Sign Up: Page 2", font=("Lora", 24))
-            header.config(bg="#4F6F52", fg="white")
-            header.place(x=10, y=10, width=380, height=50)
-
-            #Clothing Size Label
-            size_label = Label(second_window, text="Clothing Size:", font=("Lora", 12))
-            size_label.config(bg="white", fg="black")
-            size_label.place(x=10, y=70, width=180, height=30)
-            size_options = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"]
-            size_var = StringVar(second_window)
-            if size_options:
-                size_var.set(size_options[0])
-            else:
-                size_var.set("Default")
-
-            #Dropdown Menu
-            size_dropdown = OptionMenu(second_window, size_var, *size_options)
-            size_dropdown.config(bg='white', fg="black")
-            size_dropdown.place(x=200, y=70, width=180, height=30)
-
-            #Shoe Size Label
-            shoe_size_label = Label(second_window, text="Shoe Size:", font=("Lora", 12))
-            shoe_size_label.config(bg="white", fg="black")
-            shoe_size_label.place(x=10, y=110, width=180, height=30)
-            shoe_size_options = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
-            shoe_size_var = StringVar(second_window)
-            if shoe_size_options:
-                shoe_size_var.set(shoe_size_options[0])
-            else:
-                shoe_size_var.set("Default")
-
-            #Dropdown Menu
-            shoe_size_dropdown = OptionMenu(second_window, shoe_size_var, *shoe_size_options)
-            shoe_size_dropdown.config(bg='white', fg="black")
-            shoe_size_dropdown.place(x=200, y=110, width=180, height=30)
-
-            # Save user data to database
-            def save_user():
-                cursor.execute(
-                    'INSERT INTO users (first_name, last_name, email, password, gender, clothing_size, shoe_size) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                    (
-                        first_name_entry.get(),  # first name
-                        last_name_entry.get(),  # last name
-                        email_entry.get(),
-                        password_entry.get(),
-                        gender_var.get(),
-                        size_var.get(),
-                        shoe_size_var.get()
-                    )
-                )
-                conn.commit()
-                messagebox.showinfo("Success", "Sign up successful!")
-                second_window.destroy()
-                sign_up_window.destroy()
-                mainpage.deiconify()
-
-            #Creating Sign Up Button
-            sign_up_button= Label(second_window, text="Sign Up", font=("Lora", 12), bg="#809D3C", fg="White")
-            sign_up_button.place(x=10, y=160, width=370, height=40)
-            sign_up_button.bind("<Button-1>", lambda event: save_user())
-            
             sign_up_button = Label(second_window, text="Sign Up", font=("Lora", 12), bg="#809D3C", fg="White")
             sign_up_button.place(x=10, y=160, width=370, height=40)
             sign_up_button.bind("<Button-1>", lambda event: save_user())
 
         # Function to handle continue button click
         def handle_continue():
-            gender = gender_var.get()
             # Check required fields
-            if first_name_entry.get() == "" or last_name_entry.get() =="" or email_entry.get() == "" or password_entry.get() == "":
+            if first_name_entry.get() == "" or last_name_entry.get() == "" or email_entry.get() == "" or password_entry.get() == "":
                 messagebox.showwarning("Missing Fields", "Please fill in all required fields.")
-                return  # Stop here, don't open the next page
-            if gender == "Male":
-                male_second_signup_window()
-            elif gender == "Female":
-                female_second_signup_window()
+                return
+            second_signup_window()
 
-        # Continue Button to the next page
         continue_button = Label(sign_up_window, text="Continue", font=("Lora", 12), bg="#809D3C", fg="white")
         continue_button.place(x=200, y=310, width=180, height=30)
         continue_button.bind("<Button-1>", lambda e: handle_continue())
+
+# --- Session check on app start (call this before showing main page) ---
+def load_session(shared):
+    import time
+    if os.path.exists("session.txt"):
+        with open("session.txt", "r") as f:
+            data = f.read().strip().split("|")
+            if len(data) == 3:
+                email, session_code, expiry = data
+                if int(expiry) > int(time.time()):
+                    shared.current_user_email = email
+                    shared.session_code = session_code
+                else:
+                    os.remove("session.txt")

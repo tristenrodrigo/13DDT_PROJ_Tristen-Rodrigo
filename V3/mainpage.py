@@ -1,7 +1,7 @@
 from tkinter import Tk, Label, Entry, Toplevel
-from cisf.listings import ListingsPage
-from cisf.signin import SignInPage
-from cisf.manage import ManageAccountPage
+from V3.listings import ListingsPage
+from V3.signin import SignInPage
+from V3.manage import ManageAccountPage
 from PIL import Image, ImageTk
 
 class MainPage:

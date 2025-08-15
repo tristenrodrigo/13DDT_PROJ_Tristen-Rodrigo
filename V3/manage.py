@@ -35,7 +35,7 @@ class ManageAccountPage:
         user_info_text.place(x=10, y=300, width=380, height=100)
 
         back_button = Label(manage_account_window, text="Back to Main Page", font=("Lora", 12), bg="#809D3C", fg="white")
-        back_button.place(x=10, y=650, width=370, height=40)
+        back_button.place(x=205, y=600, width=185, height=40)
         
         def handle_back(event):
             manage_account_window.destroy()
@@ -131,5 +131,23 @@ class ManageAccountPage:
             back_button.bind("<Button-1>", lambda event: (edit_window.destroy(), mainpage.deiconify()))
     
         edit_button = Label(manage_account_window, text="Edit Account", font=("Lora", 12), bg="#809D3C", fg="white")
-        edit_button.place(x=10, y=600, width=370, height=40)
+        edit_button.place(x=10, y=600, width=185, height=40)
         edit_button.bind("<Button-1>", lambda event: (manage_account_window.withdraw(), edit_account_page(self)))
+
+        # Log Out Button
+        def handle_logout(event):
+            # Remove session file if it exists
+            import os
+            if os.path.exists("session.txt"):
+                os.remove("session.txt")
+            self.shared.current_user_email = None
+            if hasattr(self.shared, "session_code"):
+                del self.shared.session_code
+            messagebox.showinfo("Logged Out", "You have been logged out.")
+            manage_account_window.destroy()
+            mainpage.deiconify()
+            self.shared.update_mainpage_buttons()
+
+        logout_button = Label(manage_account_window, text="Log Out", font=("Lora", 12), bg="#B22222", fg="white")
+        logout_button.place(x=10, y=650, width=380, height=40)
+        logout_button.bind("<Button-1>", handle_logout)
