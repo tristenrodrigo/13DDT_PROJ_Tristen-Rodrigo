@@ -1,4 +1,4 @@
-from tkinter import Toplevel, Label, Entry, StringVar, OptionMenu, filedialog, messagebox
+from tkinter import Toplevel, Label, Entry, StringVar, OptionMenu, filedialog, messagebox, Message, Text
 from PIL import Image, ImageTk
 
 class ListingsPage:
@@ -21,11 +21,13 @@ class ListingsPage:
 
         # Image upload
         uploaded_image_label = Label(new_listing_window, bg="white", relief="groove")
-        uploaded_image_label.place(x=20, y=70, width=120, height=120)
+        uploaded_image_label.place(x=20, y=60, width=120, height=120)
         image_path = {"path": None}
 
         def upload_image():
-            file_path = filedialog.askopenfilename(title='Select an Image', filetypes=[("Image Files", "*.png;*.jpg;*.jpeg;*")])
+            file_path = filedialog.askopenfilename(
+                filetypes=[("Image Files", "*.png;*.jpg;*.jpeg;*.gif")]
+            )
             if file_path:
                 try:
                     img = Image.open(file_path)
@@ -43,25 +45,25 @@ class ListingsPage:
 
         # Item Name
         item_name_label = Label(new_listing_window, text="Item Name:", font=("Lora", 12), bg="white", fg="black")
-        item_name_label.place(x=10, y=210, width=120, height=30)
+        item_name_label.place(x=10, y=300, width=120, height=30)
         item_name_entry = Entry(new_listing_window, font=("Lora", 12), bg='white', fg="black")
-        item_name_entry.place(x=140, y=210, width=220, height=30)
+        item_name_entry.place(x=140, y=300, width=220, height=30)
 
         # Item Description
         item_description_label = Label(new_listing_window, text="Description:", font=("Lora", 12), bg="white", fg="black")
-        item_description_label.place(x=10, y=250, width=120, height=30)
-        item_description_entry = Entry(new_listing_window, font=("Lora", 12), bg='white', fg="black")
-        item_description_entry.place(x=140, y=250, width=220, height=30)
+        item_description_label.place(x=10, y=350, width=120, height=30)
+        item_description_entry = Text(new_listing_window, font=("Lora", 12), bg='white', fg="black", wrap="word")
+        item_description_entry.place(x=140, y=350, width=220, height=80)
 
         # Category dropdown
         category_label = Label(new_listing_window, text="Category:", font=("Lora", 12), bg="white", fg="black")
-        category_label.place(x=10, y=300, width=120, height=30)
+        category_label.place(x=10, y=210, width=120, height=30)
         category_options = ["Clothes", "Shoes", "Accessories"]
         category_var = StringVar(new_listing_window)
         category_var.set(category_options[0])
         category_dropdown = OptionMenu(new_listing_window, category_var, *category_options)
         category_dropdown.config(bg='white', fg="black")
-        category_dropdown.place(x=140, y=300, width=220, height=30)
+        category_dropdown.place(x=140, y=210, width=220, height=30)
 
         # Extra fields for each category (dropdowns)
         clothes_size_label = Label(new_listing_window, text="Clothing Size:", font=("Lora", 12), bg="white", fg="black")
@@ -90,24 +92,24 @@ class ListingsPage:
 
             category = category_var.get()
             if category == "Clothes":
-                clothes_size_label.place(x=10, y=350, width=120, height=30)
-                clothes_size_dropdown.place(x=140, y=350, width=220, height=30)
+                clothes_size_label.place(x=10, y=250, width=120, height=30)
+                clothes_size_dropdown.place(x=140, y=250, width=220, height=30)
                 clothes_size_dropdown.config(bg='white', fg="black")
             elif category == "Shoes":
-                shoes_size_label.place(x=10, y=350, width=120, height=30)
-                shoes_size_dropdown.place(x=140, y=350, width=220, height=30)
+                shoes_size_label.place(x=10, y=250, width=120, height=30)
+                shoes_size_dropdown.place(x=140, y=250, width=220, height=30)
                 shoes_size_dropdown.config(bg='white', fg="black")
             elif category == "Accessories":
-                accessory_type_label.place(x=10, y=350, width=120, height=30)
-                accessory_type_entry.place(x=140, y=350, width=220, height=30)
+                accessory_type_label.place(x=10, y=250, width=120, height=30)
+                accessory_type_entry.place(x=140, y=250, width=220, height=30)
 
-        # Use trace to call show_extra_options when category changes
+        # Trace to call show_extra_options when category changes
         category_var.trace_add("write", show_extra_options)
         show_extra_options()  # Show default on startup
 
         def save_listing():
             name = item_name_entry.get()
-            description = item_description_entry.get()
+            description = item_description_entry.get("1.0", "end-1c")
             img_path = image_path["path"]
             category = category_var.get()
             extra1 = None
@@ -148,10 +150,11 @@ class ListingsPage:
         listing_window.resizable(False, False)
         listing_window.config(bg="white")
 
+        # Fetch listing info, including seller_email (make sure your listings table has this column)
         if listing_id:
-            cursor.execute("SELECT name, description, image_path FROM listings WHERE id=?", (listing_id,))
+            cursor.execute("SELECT name, description, image_path, seller_email FROM listings WHERE id=?", (listing_id,))
         else:
-            cursor.execute("SELECT name, description, image_path FROM listings ORDER BY id DESC LIMIT 1")
+            cursor.execute("SELECT name, description, image_path, seller_email FROM listings ORDER BY id DESC LIMIT 1")
         listing = cursor.fetchone()
 
         header = Label(listing_window, text=listing[0] if listing else "Listing", font=("Lora", 24))
@@ -175,9 +178,25 @@ class ListingsPage:
         description_label.config(bg="white", fg="black")
         description_label.place(x=10, y=260, width=180, height=30)
 
-        description_text = Label(listing_window, text=listing[1] if listing else "", font=("Lora", 12))
-        description_text.config(bg="white", fg="black")
-        description_text.place(x=200, y=260, width=180, height=30)
+        description_text = Message(listing_window, text=listing[1] if listing else "", font=("Lora", 12), bg="white", fg="black", width=180)
+        description_text.place(x=200, y=260, width=180, height=100)
+
+        # --- Seller Info Section ---
+        if listing and listing[3]:
+            seller_email = listing[3]
+            cursor.execute("SELECT first_name, last_name FROM users WHERE email=?", (seller_email,))
+            seller = cursor.fetchone()
+            seller_name = f"{seller[0]} {seller[1]}" if seller else "Unknown"
+            seller_email_display = seller_email if seller else "Unknown"
+
+            seller_label = Label(listing_window, text="Seller Info:", font=("Lora", 12, "bold"), bg="white", fg="#4F6F52")
+            seller_label.place(x=10, y=320, width=380, height=30)
+            seller_name_label = Label(listing_window, text=f"Name: {seller_name}", font=("Lora", 12), bg="white", fg="black")
+            seller_name_label.place(x=10, y=350, width=380, height=30)
+            seller_email_label = Label(listing_window, text=f"Email: {seller_email_display}", font=("Lora", 12), bg="white", fg="black")
+            seller_email_label.place(x=10, y=380, width=380, height=30)
+
+        # --- End Seller Info Section ---
 
         back_button = Label(listing_window, text="Back to Main Page", font=("Lora", 12), bg="#809D3C", fg="white")
         back_button.place(x=10, y=650, width=370, height=40)

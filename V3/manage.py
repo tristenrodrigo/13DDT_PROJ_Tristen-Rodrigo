@@ -192,3 +192,61 @@ class ManageAccountPage:
         logout_button = Label(manage_account_window, text="Log Out", font=("Lora", 12), bg="#B22222", fg="white")
         logout_button.place(x=10, y=650, width=380, height=40)
         logout_button.bind("<Button-1>", handle_logout)
+
+        # --- My Listings Section ---
+        my_listings_label = Label(
+            manage_account_window,
+            text="My Listings",
+            font=("Lora", 16, "bold"),
+            bg="white",
+            fg="#4F6F52"
+        )
+        my_listings_label.place(x=10, y=380, width=380, height=30)
+
+        cursor.execute("SELECT id, name, image_path FROM listings WHERE seller_email=?", (current_user_email,))
+        listings = cursor.fetchall()
+
+        if listings:
+            x_offset = 10
+            y_fixed = 420
+            image_refs = []  # hold references to avoid garbage collection
+            for listing in listings:
+                img_label = Label(manage_account_window, bg="white", relief="groove")
+                photo = None
+                if listing[2]:
+                    try:
+                        from PIL import Image, ImageTk
+                        img = Image.open(listing[2])
+                        img = img.resize((60, 60))
+                        photo = ImageTk.PhotoImage(img)
+                        img_label.config(image=photo)
+                        img_label.image = photo
+                        image_refs.append(photo)
+                    except Exception:
+                        img_label.config(text="No image", fg="red", font=("Lora", 8))
+                else:
+                    img_label.config(text="No image", fg="gray", font=("Lora", 8))
+                img_label.place(x=x_offset, y=y_fixed, width=60, height=60)
+
+                name_label = Label(manage_account_window, text=listing[1], font=("Lora", 10), bg="white", fg="black")
+                name_label.place(x=x_offset, y=y_fixed+62, width=60, height=18)
+
+                # Bind click to open edit page for this listing
+                def open_edit(event, listing_id=listing[0]):
+                    from V3.listings import ListingsPage
+                    ListingsPage(self.shared).edit_listing_page(listing_id)
+                    manage_account_window.withdraw()
+
+                img_label.bind("<Button-1>", open_edit)
+                name_label.bind("<Button-1>", open_edit)
+
+                x_offset += 70
+        else:
+            no_listings_label = Label(
+                manage_account_window,
+                text="No listings found.",
+                font=("Lora", 12),
+                bg="white",
+                fg="gray"
+            )
+            no_listings_label.place(x=10, y=420, width=380, height=30)

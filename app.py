@@ -4,10 +4,11 @@ from V3.mainpage import MainPage
 from V3.signin import load_session
 
 def main():
+    db = Database()
     shared = SharedState()
-    shared.db = Database()
-    shared.conn = shared.db.conn
-    shared.cursor = shared.db.cursor
+    shared.db = db
+    shared.conn = db.conn
+    shared.cursor = db.cursor
     load_session(shared)
     MainPage(shared)
 
