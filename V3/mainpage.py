@@ -1,4 +1,4 @@
-from tkinter import Tk, Label, Entry, Toplevel
+from tkinter import Tk, Label, Entry, Toplevel, StringVar, OptionMenu
 from V3.listings import ListingsPage
 from V3.signin import SignInPage
 from V3.manage import ManageAccountPage

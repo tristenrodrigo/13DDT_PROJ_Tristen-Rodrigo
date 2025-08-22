@@ -113,6 +113,8 @@ class ListingsPage:
             img_path = image_path["path"]
             category = category_var.get()
             extra1 = None
+            # Get current user email from shared
+            seller_email = getattr(self.shared, 'current_user_email', None)
             if not name:
                 messagebox.showwarning("Missing Name", "Please enter an item name.")
                 return
@@ -122,9 +124,10 @@ class ListingsPage:
                 extra1 = shoes_size_var.get()
             elif category == "Accessories":
                 extra1 = accessory_type_entry.get()
+            # Insert with seller_email
             cursor.execute(
-                'INSERT INTO listings (name, description, image_path, category) VALUES (?, ?, ?, ?)',
-                (name, description, img_path, category)
+                'INSERT INTO listings (name, description, image_path, category, seller_email) VALUES (?, ?, ?, ?, ?)',
+                (name, description, img_path, category, seller_email)
             )
             conn.commit()
             messagebox.showinfo("Info", "Listing saved successfully!")
