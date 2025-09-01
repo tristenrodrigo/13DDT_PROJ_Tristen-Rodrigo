@@ -4,13 +4,16 @@ from V3.signin import SignInPage
 from V3.manage import ManageAccountPage
 from PIL import Image, ImageTk
 
+#Creating the main page
 class MainPage:
+    
     def __init__(self, shared):
         self.shared = shared
         self.mainpage = self.shared.mainpage = Tk()
         self.setup_ui()
         self.mainpage.mainloop()
 
+#Base UI Setup
     def setup_ui(self):
         mainpage = self.mainpage
         mainpage.title("Loopwear")
