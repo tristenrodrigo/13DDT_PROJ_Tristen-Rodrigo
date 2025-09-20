@@ -5,13 +5,15 @@ import time
 
 class SignInPage:
     def __init__(self, shared):
-        self.shared = shared
+        self.shared = shared # Shared state object for cross-module data
 
     def sign_in_page(self):
+        # Get shared resources
         mainpage = self.shared.mainpage
         cursor = self.shared.cursor
         conn = self.shared.conn
 
+        # Create Sign In window
         sign_in_window = Toplevel(mainpage)
         sign_in_window.title("Sign In")
         sign_in_window.geometry("400x700")
@@ -21,6 +23,7 @@ class SignInPage:
         header = Label(sign_in_window, text="Sign In", font=("Lora", 24), bg="#4F6F52", fg="white")
         header.place(x=0, y=0, width=400, height=50)
 
+        # --- USER INPUT FIELDS ---
         email_label = Label(sign_in_window, text="Email:", font=("Lora", 12), bg="white", fg="black")
         email_label.place(x=10, y=70, width=100, height=30)
         email_entry = Entry(sign_in_window, font=("Lora", 12), bg='white', fg="black")
@@ -31,26 +34,35 @@ class SignInPage:
         password_entry = Entry(sign_in_window, font=("Lora", 12), show="*", bg='white', fg="black")
         password_entry.place(x=120, y=110, width=250, height=30)
 
+        # --- LOGIN LOGIC ---
         def check_login():
+            # Retrieve user input
             email = email_entry.get()
             password = password_entry.get()
+
+            # Validate credentials from database
             cursor.execute("SELECT * FROM users WHERE email=? AND password=?", (email, password))
             user = cursor.fetchone()
             if user:
+                # Successful login
                 self.shared.current_user_email = email
                 # Generate session code and expiry (2 days)
                 session_code = str(uuid.uuid4())
                 expiry = int(time.time()) + 2 * 24 * 60 * 60
+
+                # Save session information
                 with open("session.txt", "w") as f:
                     f.write(f"{email}|{session_code}|{expiry}")
                 self.shared.session_code = session_code
                 messagebox.showinfo("Success", f"Welcome back, {user[1]}!")
                 sign_in_window.destroy()
                 self.shared.mainpage.deiconify()
-                self.shared.update_mainpage_buttons()
+                self.shared.update_mainpage_buttons() # Update main page buttons
             else:
+                # Invalid credentials
                 messagebox.showerror("Error", "Invalid email or password. Please try again.")
 
+        # --- BUTTONS ---
         sign_in_button = Label(sign_in_window, text="Sign In", font=("Lora", 12), bg="#809D3C", fg="white")
         sign_in_button.place(x=20, y=160, width=360, height=30)
         sign_in_button.bind("<Button-1>", lambda event: check_login())
@@ -77,6 +89,7 @@ class SignInPage:
         header = Label(sign_up_window, text="Sign Up", font=("Lora", 24), bg="#4F6F52", fg="white")
         header.place(x=0, y=0, width=400, height=50)
 
+        # --- SIGN UP PAGE 1 FIELDS ---
         first_name_label = Label(sign_up_window, text="First Name:*", font=("Lora", 12), bg="white", fg="black")
         first_name_label.place(x=10, y=110, width=70, height=30)
         first_name_entry = Entry(sign_up_window, font=("Lora", 12), bg='white', fg="black")
@@ -92,20 +105,27 @@ class SignInPage:
         email_entry = Entry(sign_up_window, font=("Lora", 12), bg='white', fg="black")
         email_entry.place(x=120, y=190, width=250, height=30)
 
+        # --- PHONE NUMBER FIELD ---
+        phone_label = Label(sign_up_window, text="Phone:*", font=("Lora", 12), bg="white", fg="black")
+        phone_label.place(x=10, y=230, width=70, height=30)
+        phone_entry = Entry(sign_up_window, font=("Lora", 12), bg='white', fg="black")
+        phone_entry.place(x=120, y=230, width=250, height=30)
+
         password_label = Label(sign_up_window, text="Password:*", font=("Lora", 12), bg="white", fg="black")
-        password_label.place(x=10, y=230, width=70, height=30)
+        password_label.place(x=10, y=270, width=70, height=30)
         password_entry = Entry(sign_up_window, font=("Lora", 12), show="*", bg='white', fg="black")
-        password_entry.place(x=120, y=230, width=250, height=30)
+        password_entry.place(x=120, y=270, width=250, height=30)
 
         gender_label = Label(sign_up_window, text="Gender:*", font=("Lora", 12), bg="white", fg="black")
-        gender_label.place(x=10, y=270, width=70, height=30)
-        gender_options = ["Male", "Female", "Other"]
+        gender_label.place(x=10, y=310, width=70, height=30)
+        gender_options = ["Male", "Female"]
         gender_var = StringVar(sign_up_window)
         gender_var.set(gender_options[0])
         gender_dropdown = OptionMenu(sign_up_window, gender_var, *gender_options)
         gender_dropdown.config(bg='white', fg="black")
-        gender_dropdown.place(x=120, y=270, width=120, height=30)
+        gender_dropdown.place(x=120, y=310, width=120, height=30)
 
+        # --- SIGN UP PAGE 1 BUTTONS ---
         back_button = Label(sign_up_window, text="Back", bg="#809D3C", fg="white", font=("Lora", 12))
         back_button.place(x=10, y=310, width=180, height=30)
         def go_back(event):
@@ -113,6 +133,7 @@ class SignInPage:
             self.sign_in_page()
         back_button.bind("<Button-1>", go_back)
 
+        # --- SIGN UP PAGE 2 ---
         def second_signup_window():
             second_window = Toplevel(sign_up_window)
             second_window.title("Sign Up")
@@ -142,10 +163,10 @@ class SignInPage:
             shoe_size_dropdown.config(bg='white', fg="black")
             shoe_size_dropdown.place(x=200, y=110, width=180, height=30)
 
-            # Save user data to database
+            # --- SAVE USER TO DATABASE ---
             def save_user():
                 cursor.execute(
-                    'INSERT INTO users (first_name, last_name, email, password, gender, clothing_size, shoe_size) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                    'INSERT INTO users (first_name, last_name, email, password, gender, clothing_size, shoe_size, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
                     (
                         first_name_entry.get(),
                         last_name_entry.get(),
@@ -153,11 +174,12 @@ class SignInPage:
                         password_entry.get(),
                         gender_var.get(),
                         size_var.get(),
-                        shoe_size_var.get()
+                        shoe_size_var.get(),
+                        phone_entry.get()
                     )
                 )
                 conn.commit()
-                # Generate session code and expiry (2 days)
+                # session code and expiry (2 days)
                 session_code = str(uuid.uuid4())
                 expiry = int(time.time()) + 2 * 24 * 60 * 60
                 with open("session.txt", "w") as f:
@@ -185,7 +207,7 @@ class SignInPage:
         continue_button.place(x=200, y=310, width=180, height=30)
         continue_button.bind("<Button-1>", lambda e: handle_continue())
 
-# --- Session check on app start (call this before showing main page) ---
+#Session check on app start (call this before showing main page)
 def load_session(shared):
     import time
     if os.path.exists("session.txt"):

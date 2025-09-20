@@ -4,7 +4,7 @@ from V3.signin import SignInPage
 from V3.manage import ManageAccountPage
 from PIL import Image, ImageTk
 
-#Creating the main page
+# Creating the main page class
 class MainPage:
     
     def __init__(self, shared):
@@ -13,7 +13,7 @@ class MainPage:
         self.setup_ui()
         self.mainpage.mainloop()
 
-#Base UI Setup
+    # Base UI Setup
     def setup_ui(self):
         mainpage = self.mainpage
         mainpage.title("Loopwear")
@@ -22,9 +22,11 @@ class MainPage:
         mainpage.config(bg="white")
 
         mainpage.grid_columnconfigure(0, weight=1)
+        # Header
         header = Label(mainpage, text="Loopwear", font=("Lora", 24), bg="#4F6F52", fg="white")
         header.place(x=0, y=0, width=400, height=60)
 
+        # Header bar below main header
         header_bar = Label(mainpage, bg='#809D3C')
         header_bar.place(x=0, y=60, width=400, height=40)
 
@@ -32,18 +34,19 @@ class MainPage:
         search_bar = Entry(mainpage, font=("Lora", 12), bg="white", fg="black")
         search_bar.place(x=10, y=70, width=250, height=20)
 
-        # Create Search Button
+        # Search Button
         search_button = Label(mainpage, text="Search", font=("Lora", 12), bg="#809D3C", fg="white")
         search_button.place(x=270, y=70, width=120, height=20)
 
-        # Display listings based on category
+        # Display listings by category on the main page
         def display_category_listings(search_term=None):
             cursor = self.shared.cursor
+            # Remove old listing widgets
             for widget in mainpage.winfo_children():
                 if getattr(widget, "is_listing_label", False):
                     widget.destroy()
 
-            # Start listings below header and header bar
+            # Define categories and their y positions
             categories = [("Clothes", 170), ("Shoes", 350), ("Accessories", 530)]
             self.image_refs = []
 
@@ -84,7 +87,7 @@ class MainPage:
                     name_label.is_listing_label = True
                     name_label.place(x=x_offset, y=y_fixed+82, width=80, height=18)
 
-                    # Bind click to open listing
+                    # Bind click to open listing details
                     def open_listing(event, listing_id=listing[0]):
                         ListingsPage(self.shared).listing_page(listing_id)
                         mainpage.withdraw()
@@ -94,7 +97,7 @@ class MainPage:
 
                     x_offset += 90  # spacing between items
 
-        # Clothes Page
+        # Clothes Page (opens when "Clothes" header is clicked)
         def clothes_page():
             clothes_window = Toplevel(self.shared.mainpage)
             clothes_window.title("Clothes")
@@ -104,6 +107,7 @@ class MainPage:
             header = Label(clothes_window, text="Clothes", font=("Lora", 24), bg="#4F6F52", fg="white")
             header.place(x=0, y=0, width=400, height=50)
 
+            # Back button for clothes page
             back_button = Label(clothes_window, text="Back to Main Page", font=("Lora", 12), bg="#809D3C", fg="white")
             back_button.place(x=10, y=650, width=370, height=40)
             back_button.bind("<Button-1>", lambda event: (clothes_window.destroy(), self.shared.mainpage.deiconify()))
@@ -125,11 +129,12 @@ class MainPage:
                 )
                 x_offset += 120
 
+        # Clothes header on main page
         clothes_header = Label(mainpage, text="Clothes", font=("Lora", 18), bg="#5D8736", fg="white")
         clothes_header.place(x=10, y=120, width=180, height=40)
         clothes_header.bind("<Button-1>", lambda event: (clothes_page(), mainpage.withdraw()))
 
-        # Shoes Page
+        # Shoes Page (opens when "Shoes" header is clicked)
         def shoes_page():
             shoes_window = Toplevel(self.shared.mainpage)
             shoes_window.title("Shoes")
@@ -139,6 +144,7 @@ class MainPage:
             header = Label(shoes_window, text="Shoes", font=("Lora", 24), bg="#4F6F52", fg="white")
             header.place(x=0, y=0, width=400, height=50)
 
+            # Back button for shoes page
             back_button = Label(shoes_window, text="Back to Main Page", font=("Lora", 12), bg="#809D3C", fg="white")
             back_button.place(x=10, y=650, width=370, height=40)
             back_button.bind("<Button-1>", lambda event: (shoes_window.destroy(), self.shared.mainpage.deiconify()))
@@ -160,11 +166,12 @@ class MainPage:
                 )
                 x_offset += 120
 
+        # Shoes header on main page
         shoes_header = Label(mainpage, text="Shoes", font=("Lora", 18), bg="#5D8736", fg="white")
         shoes_header.place(x=10, y=300, width=180, height=40)
         shoes_header.bind("<Button-1>", lambda event: (shoes_page(), mainpage.withdraw()))
 
-        # Accessories Page
+        # Accessories Page (opens when "Accessories" header is clicked)
         def accessories_page():
             accessories_window = Toplevel(self.shared.mainpage)
             accessories_window.title("Accessories")
@@ -174,6 +181,7 @@ class MainPage:
             header = Label(accessories_window, text="Accessories", font=("Lora", 24), bg="#4F6F52", fg="white")
             header.place(x=0, y=0, width=400, height=50)
 
+            # Back button for accessories page
             back_button = Label(accessories_window, text="Back to Main Page", font=("Lora", 12), bg="#809D3C", fg="white")
             back_button.place(x=10, y=650, width=370, height=40)
             back_button.bind("<Button-1>", lambda event: (accessories_window.destroy(), self.shared.mainpage.deiconify()))
@@ -195,11 +203,12 @@ class MainPage:
                 )
                 x_offset += 120
 
+        # Accessories header on main page
         accessories_header = Label(mainpage, text="Accessories", font=("Lora", 18), bg="#5D8736", fg="white")
         accessories_header.place(x=10, y=480, width=180, height=40)
         accessories_header.bind("<Button-1>", lambda event: (accessories_page(), mainpage.withdraw()))
 
-        # Sign In Button
+        # Sign In Button (shows if not logged in)
         sign_in_button = Label(mainpage, text="Sign In", font=("Lora", 12), bg="#5D8736", fg="white")
         sign_in_button.place(x=270, y=650, width=120, height=40)
         def open_sign_in(event):
@@ -207,7 +216,7 @@ class MainPage:
             mainpage.withdraw()
         sign_in_button.bind("<Button-1>", open_sign_in)
 
-        # Manage Account Button
+        # Manage Account Button (shows if logged in)
         manage_account_button = Label(mainpage, text="Manage Account", font=("Lora", 12), bg="#5D8736", fg="white")
         manage_account_button.place(x=270, y=650, width=120, height=40)
         def open_manage_account(event):
@@ -223,6 +232,7 @@ class MainPage:
             mainpage.withdraw()
         new_listing_button.bind("<Button-1>", open_new_listing)
 
+        # Show/hide buttons based on login state
         def update_buttons():
             if self.shared.current_user_email:
                 sign_in_button.place_forget()
@@ -234,8 +244,10 @@ class MainPage:
         update_buttons()
         self.shared.update_mainpage_buttons = update_buttons
 
+        # Display all categories on startup
         display_category_listings()
 
+        # Search logic for listings
         def search_and_open_listing(event):
             cursor = self.shared.cursor
             search_term = search_bar.get()

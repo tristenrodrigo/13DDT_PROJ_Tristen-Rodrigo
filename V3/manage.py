@@ -9,22 +9,24 @@ class ManageAccountPage:
         cursor = self.shared.cursor
         current_user_email = self.shared.current_user_email
 
+        # Create the Manage Account window
         manage_account_window = Toplevel(mainpage)
         manage_account_window.title("Manage Account")
         manage_account_window.geometry("400x700")
         manage_account_window.resizable(False, False)
         manage_account_window.config(bg="white")
 
+        # Header label
         header = Label(manage_account_window, text="Manage Account", font=("Lora", 24), bg="#4F6F52", fg="white")
         header.place(x=0, y=0, width=400, height=50)
 
-        # Fetch user data from the database
+        # --- Fetch user data from the database ---
         user_info = None
         if current_user_email:
             cursor.execute("SELECT first_name, last_name, email, gender, clothing_size, shoe_size FROM users WHERE email=?", (current_user_email,))
             user_info = cursor.fetchone()
 
-        # User Info Section
+        # --- User Info Section ---
         user_info_label = Label(
             manage_account_window,
             text="User Information",
@@ -35,7 +37,7 @@ class ManageAccountPage:
         user_info_label.place(x=10, y=120, width=380, height=40)
 
         if user_info:
-            # Nicely formatted info with bold labels
+            # Display user info in a formatted way
             info_labels = ["Name:", "Email:", "Gender:", "Clothing Size:", "Shoe Size:"]
             info_values = [
                 f"{user_info[0]} {user_info[1]}",
@@ -63,6 +65,7 @@ class ManageAccountPage:
                 )
                 value.place(x=160, y=y_start + i*40, width=220, height=30)
         else:
+            # Show message if no user info found
             info_text = "No user info found."
             user_info_text = Label(
                 manage_account_window,
@@ -75,6 +78,7 @@ class ManageAccountPage:
             )
             user_info_text.place(x=10, y=170, width=380, height=30)
 
+        # --- Back Button ---
         back_button = Label(manage_account_window, text="Back to Main Page", font=("Lora", 12), bg="#809D3C", fg="white")
         back_button.place(x=205, y=600, width=185, height=40)
         
@@ -84,12 +88,14 @@ class ManageAccountPage:
 
         back_button.bind("<Button-1>", handle_back)
 
+        # --- Edit Account Section ---
         def edit_account_page(self):
             mainpage = self.shared.mainpage
             cursor = self.shared.cursor
             conn = self.shared.conn
             current_user_email = self.shared.current_user_email
 
+            # Create Edit Account window
             edit_window = Toplevel(mainpage)
             edit_window.title("Edit Account")
             edit_window.geometry("400x700")
@@ -99,15 +105,15 @@ class ManageAccountPage:
             header = Label(edit_window, text="Edit Account", font=("Lora", 24), bg="#4F6F52", fg="white")
             header.place(x=0, y=0, width=400, height=50)
 
-            # Fetch current user info
+            # Fetch current user info for editing
             cursor.execute("SELECT first_name, last_name, gender, clothing_size, shoe_size FROM users WHERE email=?", (current_user_email,))
             user_info = cursor.fetchone() if current_user_email else None
 
-            # Entry fields
+            # Entry fields for editing
             first_name_entry = Entry(edit_window, font=("Lora", 12), bg="white", fg="black")
             last_name_entry = Entry(edit_window, font=("Lora", 12), bg="white", fg="black")
 
-            # Dropdown options
+            # Dropdown options for gender, clothing size, shoe size
             gender_options = ["Male", "Female", "Other"]
             clothing_size_options = ["XS", "S", "M", "L", "XL", "XXL"]
             shoe_size_options = [str(size) for size in range(5, 14)]
@@ -117,7 +123,7 @@ class ManageAccountPage:
             clothing_size_var = StringVar(edit_window)
             shoe_size_var = StringVar(edit_window)
 
-            # Pre-fill with current info
+            # Pre-fill fields with current info
             if user_info:
                 first_name_entry.insert(0, user_info[0])
                 last_name_entry.insert(0, user_info[1])
@@ -129,6 +135,7 @@ class ManageAccountPage:
                 clothing_size_var.set(clothing_size_options[0])
                 shoe_size_var.set(shoe_size_options[0])
 
+            # Place labels and entry/dropdown fields
             Label(edit_window, text="First Name:", font=("Lora", 12), bg="white", fg="black").place(x=10, y=70, width=120, height=30)
             first_name_entry.place(x=140, y=70, width=200, height=30)
             Label(edit_window, text="Last Name:", font=("Lora", 12), bg="white", fg="black").place(x=10, y=120, width=120, height=30)
@@ -146,6 +153,7 @@ class ManageAccountPage:
             shoe_size_dropdown = OptionMenu(edit_window, shoe_size_var, *shoe_size_options)
             shoe_size_dropdown.place(x=140, y=270, width=200, height=30)
 
+            # Save changes to user info
             def save_changes(event):
                 cursor.execute(
                     "UPDATE users SET first_name=?, last_name=?, gender=?, clothing_size=?, shoe_size=? WHERE email=?",
@@ -171,11 +179,12 @@ class ManageAccountPage:
             back_button.place(x=10, y=650, width=370, height=40)
             back_button.bind("<Button-1>", lambda event: (edit_window.destroy(), mainpage.deiconify()))
     
+        # --- Edit Account Button ---
         edit_button = Label(manage_account_window, text="Edit Account", font=("Lora", 12), bg="#809D3C", fg="white")
         edit_button.place(x=10, y=600, width=185, height=40)
         edit_button.bind("<Button-1>", lambda event: (manage_account_window.withdraw(), edit_account_page(self)))
 
-        # Log Out Button
+        # --- Log Out Button ---
         def handle_logout(event):
             # Remove session file if it exists
             import os
@@ -203,6 +212,7 @@ class ManageAccountPage:
         )
         my_listings_label.place(x=10, y=380, width=380, height=30)
 
+        # Query for listings created by the current user
         cursor.execute("SELECT id, name, image_path FROM listings WHERE seller_email=?", (current_user_email,))
         listings = cursor.fetchall()
 
@@ -242,6 +252,7 @@ class ManageAccountPage:
 
                 x_offset += 70
         else:
+            # Show message if user has no listings
             no_listings_label = Label(
                 manage_account_window,
                 text="No listings found.",
